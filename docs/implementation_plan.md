@@ -49,12 +49,12 @@
 
 ## Authentication
 
-- [ ] **Step 33**: Create a `middleware/` directory in `backend/src/`.
-- [ ] **Step 34**: Create `authMiddleware.js` in `middleware/` to validate Supabase JWT tokens.
-- [ ] **Step 35**: Install `jsonwebtoken` in `backend/` for token verification.
-- [ ] **Step 36**: Update `authMiddleware.js` to decode and verify tokens.
-- [ ] **Step 37**: Add a `/api/auth/test` endpoint in `app.js` to test authentication.
-- [ ] **Step 38**: Manually test the test endpoint with a valid Supabase JWT.
+- [x] **Step 33**: Create a `middleware/` directory in `backend/src/`.
+- [x] **Step 34**: Create `authMiddleware.js` in `middleware/` to validate Supabase JWT tokens.
+- [x] **Step 35**: Install `jsonwebtoken` in `backend/` for token verification.
+- [x] **Step 36**: Update `authMiddleware.js` to decode and verify tokens.
+- [x] **Step 37**: Add a `/api/auth/test` endpoint in `app.js` to test authentication.
+- [x] **Step 38**: Manually test the test endpoint with a valid Supabase JWT.
 
 ---
 
@@ -130,12 +130,12 @@
 - [x] **Step 86**: Create `main.js` in `src/` as the website's entry point.
 - [x] **Step 87**: Create `App.js` in `src/` with a basic dashboard layout.
 - [x] **Step 88**: Create `index.html` in `website/` with a root div.
-- [ ] **Step 89**: Install React Router in `website/`.
-- [ ] **Step 90**: Create a `pages/` directory in `website/src/`.
-- [ ] **Step 91**: Create `Dashboard.js` in `pages/` for the main view.
-- [ ] **Step 92**: Create `Settings.js` in `pages/` for user settings.
-- [ ] **Step 93**: Configure routing in `App.js` with React Router.
-- [ ] **Step 94**: Build the website using Vite and test locally.
+- [x] **Step 89**: Install React Router in `website/`.
+- [x] **Step 90**: Create a `pages/` directory in `website/src/`.
+- [x] **Step 91**: Create `Dashboard.js` in `pages/` for the main view.
+- [x] **Step 92**: Create `Settings.js` in `pages/` for user settings.
+- [x] **Step 93**: Configure routing in `App.js` with React Router.
+- [x] **Step 94**: Build the website using Vite and test locally.
 
 ---
 
@@ -144,8 +144,8 @@
 - [x] **Step 95**: Navigate to `frontend/packages/shared/`.
 - [x] **Step 96**: Initialize a Node.js project in the shared directory.
 - [x] **Step 97**: Create a `ui-components/` directory in `shared/`.
-- [ ] **Step 98**: Create `TaskCard.js` in `ui-components/` for reusable task UI.
-- [ ] **Step 99**: Create `ModeToggle.js` in `ui-components/` for mode controls.
+- [x] **Step 98**: Create `TaskCard.js` in `ui-components/` for reusable task UI.
+- [x] **Step 99**: Create `ModeToggle.js` in `ui-components/` for mode controls.
 - [x] **Step 100**: Link the shared package to `website/` and `chrome-extension/` via Yarn Workspaces.
 
 ---
@@ -156,7 +156,17 @@
 - [ ] **Step 102**: Add caching to `screenshotService.js` for hashed screenshots.
 - [ ] **Step 103**: Install `express-validator` in `backend/`.
 - [ ] **Step 104**: Add input validation to `/trigger` in `yellRoutes.js`.
-- [ ] **Step 105**: Strengthen `authMiddleware.js` with JWT validation for all protected routes.
+- [x] **Step 105**: Strengthen `authMiddleware.js` with JWT validation for all protected routes.
+
+---
+
+## Authentication Integration
+
+- [x] **Step 124**: Create centralized API service for authenticated requests.
+- [x] **Step 125**: Update AuthContext to handle both Supabase and backend authentication.
+- [x] **Step 126**: Implement database user synchronization in dashboard.
+- [x] **Step 127**: Add proper environment variable type definitions for Vite.
+- [x] **Step 128**: Update login flow to properly authenticate with backend.
 
 ---
 

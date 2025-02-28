@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  settings  Json?     
+  
+  // Relations
+  screenshots  Screenshot[]
+  yells        Yell[]
+  transcriptions Transcription[]
+  insights     Insight[]
+  clusters     Cluster[]
+
+  @@map("users")
+}
+
+model Screenshot {
+  id            Int       @id @default(autoincrement())
+  userId        String    @map("user_id")
+  timestamp     DateTime  @default(now())
+  hash          String
+  classification String?
+  confidence    Float?
+  
+  // Relations
+  user          User      @relation(fields: [userId], references: [id])
+  yells         Yell[]
+  clusters      Cluster[]
+
+  @@map("screenshots")
+}
+
+model Yell {
+  id            Int       @id @default(autoincrement())
+  userId        String    @map("user_id")
+  screenshotId  Int?      @map("screenshot_id")
+  timestamp     DateTime  @default(now())
+  style         String?
+  audioFile     String?   @map("audio_file")
+  
+  // Relations
+  user          User      @relation(fields: [userId], references: [id])
+  screenshot    Screenshot? @relation(fields: [screenshotId], references: [id])
+
+  @@map("yells")
+}
+
+model Transcription {
+  id            Int       @id @default(autoincrement())
+  userId        String    @map("user_id")
+  timestamp     DateTime  @default(now())
+  text          String
+  
+  // Relations
+  user          User      @relation(fields: [userId], references: [id])
+  tasks         Task[]
+  summaries     Summary[]
+  suggestions   Suggestion[]
+
+  @@map("transcriptions")
+}
+
+model Task {
+  id                Int       @id @default(autoincrement())
+  transcriptionId   Int       @map("transcription_id")
+  title             String
+  description       String?
+  priority          String?
+  category          String?
+  
+  // Relations
+  transcription     Transcription @relation(fields: [transcriptionId], references: [id])
+  suggestions       Suggestion[]
+
+  @@map("tasks")
+}
+
+model Summary {
+  id                Int       @id @default(autoincrement())
+  transcriptionId   Int       @map("transcription_id")
+  summaryText       String    @map("summary_text")
+  
+  // Relations
+  transcription     Transcription @relation(fields: [transcriptionId], references: [id])
+
+  @@map("summaries")
+}
+
+model Suggestion {
+  id                Int       @id @default(autoincrement())
+  type              String
+  taskId            Int?      @map("task_id")
+  transcriptionId   Int?      @map("transcription_id")
+  suggestionText    String    @map("suggestion_text")
+  
+  // Relations
+  task              Task?     @relation(fields: [taskId], references: [id])
+  transcription     Transcription? @relation(fields: [transcriptionId], references: [id])
+
+  @@map("suggestions")
+}
+
+model Insight {
+  id                Int       @id @default(autoincrement())
+  userId            String    @map("user_id")
+  type              String
+  data              Json
+  
+  // Relations
+  user              User      @relation(fields: [userId], references: [id])
+
+  @@map("insights")
+}
+
+model Cluster {
+  id                Int       @id @default(autoincrement())
+  userId            String    @map("user_id")
+  clusterId         Int       @map("cluster_id")
+  screenshotId      Int       @map("screenshot_id")
+  
+  // Relations
+  user              User      @relation(fields: [userId], references: [id])
+  screenshot        Screenshot @relation(fields: [screenshotId], references: [id])
+
+  @@map("clusters")
+}
