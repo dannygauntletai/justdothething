@@ -2,48 +2,48 @@
 
 ## Project Setup
 
-- [ ] **Step 1**: Create the project root directory: `justdothething`.
-- [ ] **Step 2**: Navigate into the root directory.
-- [ ] **Step 3**: Initialize a Node.js project with default settings.
-- [ ] **Step 4**: Install Yarn globally if not already installed.
-- [ ] **Step 5**: Set up Yarn Workspaces in the root `package.json` for frontend and backend.
-- [ ] **Step 6**: Create a `frontend/` directory in the root.
-- [ ] **Step 7**: Inside `frontend/`, create subdirectories: `packages/chrome-extension`, `packages/website`, `packages/shared`.
-- [ ] **Step 8**: Create a `backend/` directory in the root.
-- [ ] **Step 9**: Initialize a Git repository in the root.
-- [ ] **Step 10**: Create a `.gitignore` file in the root with common exclusions (e.g., `node_modules/`, `.env`).
-- [ ] **Step 11**: Commit the initial project structure to Git.
+- [x] **Step 1**: Create the project root directory: `justdothething`.
+- [x] **Step 2**: Navigate into the root directory.
+- [x] **Step 3**: Initialize a Node.js project with default settings.
+- [x] **Step 4**: Install Yarn globally if not already installed.
+- [x] **Step 5**: Set up Yarn Workspaces in the root `package.json` for frontend and backend.
+- [x] **Step 6**: Create a `frontend/` directory in the root.
+- [x] **Step 7**: Inside `frontend/`, create subdirectories: `packages/chrome-extension`, `packages/website`, `packages/shared`.
+- [x] **Step 8**: Create a `backend/` directory in the root.
+- [x] **Step 9**: Initialize a Git repository in the root.
+- [x] **Step 10**: Create a `.gitignore` file in the root with common exclusions (e.g., `node_modules/`, `.env`).
+- [x] **Step 11**: Commit the initial project structure to Git.
 
 ---
 
 ## Backend Setup
 
-- [ ] **Step 12**: Navigate to the `backend/` directory.
-- [ ] **Step 13**: Initialize a Node.js project in `backend/`.
-- [ ] **Step 14**: Install Express.js as the backend framework.
-- [ ] **Step 15**: Create a `src/` directory in `backend/`.
-- [ ] **Step 16**: Create an `app.js` file in `backend/src/` for the Express app.
-- [ ] **Step 17**: Install `dotenv` for environment variable management.
-- [ ] **Step 18**: Create a `.env` file in `backend/` with placeholders (e.g., `SUPABASE_URL`, `OPENAI_API_KEY`).
-- [ ] **Step 19**: Configure `app.js` to load environment variables using `dotenv`.
-- [ ] **Step 20**: Install the Supabase JavaScript client in `backend/`.
-- [ ] **Step 21**: Create a `config/` directory in `backend/src/`.
-- [ ] **Step 22**: Create `supabase.js` in `config/` to initialize the Supabase client.
-- [ ] **Step 23**: Open the Supabase dashboard and locate your project's `SUPABASE_URL` and `SUPABASE_KEY`.
-- [ ] **Step 24**: Add `SUPABASE_URL` and `SUPABASE_KEY` to `backend/.env`.
-- [ ] **Step 25**: Test the Supabase connection by running a simple query from `app.js`.
+- [x] **Step 12**: Navigate to the `backend/` directory.
+- [x] **Step 13**: Initialize a Node.js project in `backend/`.
+- [x] **Step 14**: Install Express.js as the backend framework.
+- [x] **Step 15**: Create a `src/` directory in `backend/`.
+- [x] **Step 16**: Create an `app.js` file in `backend/src/` for the Express app.
+- [x] **Step 17**: Install `dotenv` for environment variable management.
+- [x] **Step 18**: Create a `.env` file in `backend/` with placeholders (e.g., `SUPABASE_URL`, `OPENAI_API_KEY`).
+- [x] **Step 19**: Configure `app.js` to load environment variables using `dotenv`.
+- [x] **Step 20**: Install the Supabase JavaScript client in `backend/`.
+- [x] **Step 21**: Create a `config/` directory in `backend/src/`.
+- [x] **Step 22**: Create `supabase.js` in `config/` to initialize the Supabase client.
+- [x] **Step 23**: Open the Supabase dashboard and locate your project's `SUPABASE_URL` and `SUPABASE_KEY`.
+- [x] **Step 24**: Add `SUPABASE_URL` and `SUPABASE_KEY` to `backend/.env`.
+- [x] **Step 25**: Test the Supabase connection by running a simple query from `app.js`.
 
 ---
 
 ## Database Configuration
 
-- [ ] **Step 26**: In Supabase, create a `users` table with columns: `id (UUID)`, `settings (JSON)`.
-- [ ] **Step 27**: Create a `screenshots` table with columns: `id (Integer)`, `user_id (UUID)`, `timestamp (Datetime)`, `hash (Varchar)`, `classification (Varchar)`, `confidence (Float)`.
-- [ ] **Step 28**: Enable Row-Level Security (RLS) for the `users` table.
-- [ ] **Step 29**: Enable RLS for the `screenshots` table.
-- [ ] **Step 30**: Create an RLS policy for `users` to allow authenticated users to access their own data.
-- [ ] **Step 31**: Create an RLS policy for `screenshots` to restrict access to the user's own screenshots.
-- [ ] **Step 32**: Test RLS by inserting a sample user and querying as an authenticated user.
+- [x] **Step 26**: In Supabase, create a `users` table with columns: `id (UUID)`, `settings (JSON)`.
+- [x] **Step 27**: Create a `screenshots` table with columns: `id (Integer)`, `user_id (UUID)`, `timestamp (Datetime)`, `hash (Varchar)`, `classification (Varchar)`, `confidence (Float)`.
+- [x] **Step 28**: Enable Row-Level Security (RLS) for the `users` table.
+- [x] **Step 29**: Enable RLS for the `screenshots` table.
+- [x] **Step 30**: Create an RLS policy for `users` to allow authenticated users to access their own data.
+- [x] **Step 31**: Create an RLS policy for `screenshots` to restrict access to the user's own screenshots.
+- [x] **Step 32**: Test RLS by inserting a sample user and querying as an authenticated user.
 
 ---
 
@@ -79,19 +79,19 @@
 
 ## Chrome Extension (MVP)
 
-- [ ] **Step 53**: Navigate to `frontend/packages/chrome-extension/`.
-- [ ] **Step 54**: Initialize a Node.js project in the extension directory.
-- [ ] **Step 55**: Create a `public/` directory in `chrome-extension/`.
-- [ ] **Step 56**: Create `manifest.json` in `public/` with basic extension metadata.
-- [ ] **Step 57**: Install React, Vite, and Vite's React plugin in `chrome-extension/`.
-- [ ] **Step 58**: Create a `popup/` directory in `chrome-extension/`.
-- [ ] **Step 59**: Create `popup/index.html` as the extension's UI entry point.
-- [ ] **Step 60**: Create `popup/App.js` with a React component for mode toggles.
-- [ ] **Step 61**: Create a `background/` directory in `chrome-extension/`.
-- [ ] **Step 62**: Create `background/index.js` to handle screenshot capture.
-- [ ] **Step 63**: Configure Vite to build the extension (create `vite.config.js`).
-- [ ] **Step 64**: Build the extension using Vite.
-- [ ] **Step 65**: Load the extension in Chrome manually to verify it works.
+- [x] **Step 53**: Navigate to `frontend/packages/chrome-extension/`.
+- [x] **Step 54**: Initialize a Node.js project in the extension directory.
+- [x] **Step 55**: Create a `public/` directory in `chrome-extension/`.
+- [x] **Step 56**: Create `manifest.json` in `public/` with basic extension metadata.
+- [x] **Step 57**: Install React, Vite, and Vite's React plugin in `chrome-extension/`.
+- [x] **Step 58**: Create a `popup/` directory in `chrome-extension/`.
+- [x] **Step 59**: Create `popup/index.html` as the extension's UI entry point.
+- [x] **Step 60**: Create `popup/App.js` with a React component for mode toggles.
+- [x] **Step 61**: Create a `background/` directory in `chrome-extension/`.
+- [x] **Step 62**: Create `background/index.js` to handle authentication.
+- [x] **Step 63**: Configure Vite to build the extension (create `vite.config.js`).
+- [x] **Step 64**: Build the extension using Vite.
+- [x] **Step 65**: Load the extension in Chrome manually to verify it works.
 
 ---
 
@@ -123,13 +123,13 @@
 
 ## Website Development
 
-- [ ] **Step 82**: Navigate to `frontend/packages/website/`.
-- [ ] **Step 83**: Initialize a Node.js project in the website directory.
-- [ ] **Step 84**: Install Vite, React, and Vite's React plugin in `website/`.
-- [ ] **Step 85**: Create a `src/` directory in `website/`.
-- [ ] **Step 86**: Create `main.js` in `src/` as the website's entry point.
-- [ ] **Step 87**: Create `App.js` in `src/` with a basic dashboard layout.
-- [ ] **Step 88**: Create `index.html` in `website/` with a root div.
+- [x] **Step 82**: Navigate to `frontend/packages/website/`.
+- [x] **Step 83**: Initialize a Node.js project in the website directory.
+- [x] **Step 84**: Install Vite, React, and Vite's React plugin in `website/`.
+- [x] **Step 85**: Create a `src/` directory in `website/`.
+- [x] **Step 86**: Create `main.js` in `src/` as the website's entry point.
+- [x] **Step 87**: Create `App.js` in `src/` with a basic dashboard layout.
+- [x] **Step 88**: Create `index.html` in `website/` with a root div.
 - [ ] **Step 89**: Install React Router in `website/`.
 - [ ] **Step 90**: Create a `pages/` directory in `website/src/`.
 - [ ] **Step 91**: Create `Dashboard.js` in `pages/` for the main view.
@@ -141,12 +141,12 @@
 
 ## Shared Components
 
-- [ ] **Step 95**: Navigate to `frontend/packages/shared/`.
-- [ ] **Step 96**: Initialize a Node.js project in the shared directory.
-- [ ] **Step 97**: Create a `ui-components/` directory in `shared/`.
+- [x] **Step 95**: Navigate to `frontend/packages/shared/`.
+- [x] **Step 96**: Initialize a Node.js project in the shared directory.
+- [x] **Step 97**: Create a `ui-components/` directory in `shared/`.
 - [ ] **Step 98**: Create `TaskCard.js` in `ui-components/` for reusable task UI.
 - [ ] **Step 99**: Create `ModeToggle.js` in `ui-components/` for mode controls.
-- [ ] **Step 100**: Link the shared package to `website/` and `chrome-extension/` via Yarn Workspaces.
+- [x] **Step 100**: Link the shared package to `website/` and `chrome-extension/` via Yarn Workspaces.
 
 ---
 
