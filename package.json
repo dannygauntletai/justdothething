@@ -12,5 +12,12 @@
     "backend:start": "cd backend && yarn start",
     "extension:dev": "cd frontend/packages/chrome-extension && yarn dev",
     "website:dev": "cd frontend/packages/website && yarn dev"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "vite": "^6.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4"
   }
 }
