@@ -1,0 +1,16 @@
+{
+  "name": "justdothething",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend/packages/chrome-extension",
+    "frontend/packages/website",
+    "frontend/packages/shared",
+    "backend"
+  ],
+  "scripts": {
+    "backend:start": "cd backend && yarn start",
+    "extension:dev": "cd frontend/packages/chrome-extension && yarn dev",
+    "website:dev": "cd frontend/packages/website && yarn dev"
+  }
+}
