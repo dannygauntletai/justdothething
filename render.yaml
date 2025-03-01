@@ -16,7 +16,7 @@ services:
   - type: web
     name: justdothething-backend
     env: node
-    buildCommand: cd backend && npm ci && npm run build
+    buildCommand: cd backend && npm ci && npm run build && cp -r prisma dist/
     startCommand: cd backend && npm run start
     healthCheckPath: /api/health
     rootDir: .
