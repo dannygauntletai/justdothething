@@ -16,7 +16,7 @@
     "build:website": "cd frontend/packages/website && yarn build",
     "build:backend": "cd backend && yarn build",
     "start": "cd backend && yarn start",
-    "vercel-build": "yarn build:website"
+    "vercel-build": "cd frontend/packages/website && npm install && npm run build"
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.1.2",

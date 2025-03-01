@@ -1,8 +1,8 @@
 {
-  "buildCommand": "cd frontend/packages/website && yarn build",
-  "outputDirectory": "frontend/packages/website/dist",
   "framework": "vite",
-  "installCommand": "yarn install",
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "frontend/packages/website/dist",
+  "installCommand": "npm install",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
