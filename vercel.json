@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "yarn vercel-build",
+  "buildCommand": "yarn install && yarn build",
   "outputDirectory": "dist",
   "installCommand": "yarn install",
   "rewrites": [

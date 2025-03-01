@@ -32,6 +32,7 @@
     "@tensorflow/tfjs-backend-webgl": "^4.22.0",
     "@tensorflow/tfjs-converter": "^4.22.0",
     "@tensorflow/tfjs-core": "^4.22.0",
+    "@vitejs/plugin-react": "^4.2.0",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -49,7 +50,6 @@
     "zustand": "4.5.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.0",
     "tailwindcss": "^3.4.17"
   }
 }
