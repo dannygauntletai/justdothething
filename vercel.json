@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend/packages/website && yarn install && yarn build",
+  "buildCommand": "cd frontend/packages/website && yarn vercel-build",
   "outputDirectory": "frontend/packages/website/dist",
-  "installCommand": false,
+  "installCommand": "yarn install",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
