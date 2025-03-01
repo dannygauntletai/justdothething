@@ -1,8 +1,8 @@
 {
-  "framework": "vite",
-  "buildCommand": "cd frontend/packages/website && yarn build",
+  "version": 2,
+  "buildCommand": "cd frontend/packages/website && yarn install && yarn build",
   "outputDirectory": "frontend/packages/website/dist",
-  "installCommand": "yarn install",
+  "installCommand": false,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
