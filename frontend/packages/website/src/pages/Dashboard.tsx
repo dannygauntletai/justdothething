@@ -124,7 +124,9 @@ function Dashboard() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <CardTitle>Flow Mode</CardTitle>
+                <div className="flex items-center gap-2 justify-center">
+                  <CardTitle>Flow Mode</CardTitle>
+                </div>
                 <CardDescription>
                   Data collection and analysis for productivity insights
                 </CardDescription>
@@ -136,8 +138,8 @@ function Dashboard() {
               </CardFooter>
             </Card>
             
-            {/* Yap Mode */}
-            <Card className="flex flex-col items-center">
+            {/* Yap Mode - Grayed out */}
+            <Card className="flex flex-col items-center opacity-50 cursor-not-allowed">
               <CardHeader className="text-center">
                 <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center mb-4 mx-auto">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -150,8 +152,8 @@ function Dashboard() {
                 </CardDescription>
               </CardHeader>
               <CardFooter className="w-full mt-auto">
-                <Button variant="dark" className="w-full">
-                  Start Yapping
+                <Button variant="dark" className="w-full" disabled>
+                  Coming Soon
                 </Button>
               </CardFooter>
             </Card>
@@ -206,11 +208,12 @@ function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* AI Task Prioritizer */}
-            <Card>
+            {/* AI Task Prioritizer - Grayed out */}
+            <Card className="opacity-60 cursor-not-allowed">
               <CardHeader className="pb-2">
                 <CardTitle>AI Task Prioritizer</CardTitle>
                 <CardDescription>Intelligent task management</CardDescription>
+                <div className="mt-2 inline-block px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded">Coming Soon</div>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
@@ -233,18 +236,18 @@ function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Session Summaries */}
-            <Card>
+            {/* Session Summaries - Grayed out */}
+            <Card className="opacity-60 cursor-not-allowed">
               <CardHeader className="pb-2">
                 <CardTitle>Session Summaries</CardTitle>
                 <CardDescription>Yap session transcriptions and insights</CardDescription>
+                <div className="mt-2 inline-block px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded">Coming Soon</div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {placeholderSessions.map((session) => (
                   <div 
                     key={session.id} 
-                    className="bg-gray-100 p-3 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors"
-                    onClick={() => handleOpenSessionSummary(session)}
+                    className="bg-gray-100 p-3 rounded-lg pointer-events-none"
                   >
                     <div className="flex items-center">
                       <span className="text-purple-500 mr-2">🎙️</span>

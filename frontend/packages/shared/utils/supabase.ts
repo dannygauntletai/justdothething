@@ -16,16 +16,35 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    flowType: 'pkce' // Use PKCE flow for better security
   }
 });
+
+// Initialize by parsing hash fragment
+// This helps ensure the hash fragment is processed immediately on page load
+if (typeof window !== 'undefined') {
+  // Set up hash change event listener for better auth flow handling
+  window.addEventListener('hashchange', () => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token')) {
+      // The Supabase client will handle this automatically with detectSessionInUrl: true
+      console.log('Auth hash detected, will be processed by Supabase');
+    }
+  });
+}
 
 // Auth helpers
 export const signInWithGoogle = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${frontendUrl}/auth/callback`
+      redirectTo: `${frontendUrl}/auth/callback`,
+      queryParams: {
+        // Add any additional query parameters if needed for Google OAuth
+        // For example, prompt: 'select_account' can force account selection
+        prompt: 'select_account'
+      }
     }
   });
   
