@@ -26,8 +26,12 @@ services:
         value: 10000
       - key: FRONTEND_URL
         value: https://justdothething-website-s4fb.vercel.app
+      - key: FRONTEND_URL_PROD
+        value: https://justdothething-website-s4fb.vercel.app
+      - key: BACKEND_URL_PROD
+        value: https://justdothething.onrender.com
       - key: CORS_ORIGINS
-        value: https://justdothething-website-s4fb.vercel.app,chrome-extension://*
+        value: https://justdothething-website-s4fb.vercel.app
       - key: DATABASE_URL
         sync: false
       - key: DIRECT_URL
