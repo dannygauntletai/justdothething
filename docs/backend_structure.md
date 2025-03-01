@@ -2,16 +2,16 @@
 
 ## Introduction
 
-The backend of the Productivity App serves as the foundational system powering its AI-driven features, data management, and integration with the frontend. It supports three distinct operational modes—Yell Mode, Yap Mode, and Flow Mode—while emphasizing an offline-first approach, user privacy, and scalability. This document provides a comprehensive overview of the backend’s architecture, components, and design decisions for developers and stakeholders.
+The backend of the Productivity App serves as the foundational system powering its data management, authentication, and integration with the frontend. It supports three distinct operational modes—Yell Mode, Yap Mode, and Flow Mode—while emphasizing an offline-first approach, user privacy, and scalability. This document provides a comprehensive overview of the backend’s architecture, components, and design decisions for developers and stakeholders.
 
 ## Backend Architecture
 
 The backend is developed using **Node.js** with **Express.js**, providing a lightweight yet robust framework for building RESTful APIs. It adopts a modular, layered architecture to separate concerns effectively:
 - **Controllers**: Manage incoming API requests and responses.
-- **Services**: Contain business logic, including AI processing and external API integrations.
+- **Services**: Contain business logic, including external API integrations.
 - **Repositories**: Handle all database interactions.
 
-This separation enhances maintainability, reusability, and scalability. The backend incorporates local AI models (e.g., **TensorFlow.js** for image classification) and connects to external services like **OpenAI’s Whisper** (speech-to-text), **ElevenLabs** (text-to-speech), and the **Twitter API** (tool suggestions) via dedicated service modules. Designed for offline-first functionality, it ensures core features work without internet access, activating online enhancements only when connectivity is available. Robust error handling gracefully manages failures—like unavailable models or network issues—by falling back to defaults, ensuring a seamless user experience.
+This separation enhances maintainability, reusability, and scalability. The backend connects to external services like **OpenAI’s Whisper** (speech-to-text), **ElevenLabs** (text-to-speech), and the **Twitter API** (tool suggestions) via dedicated service modules. Designed for offline-first functionality, it ensures core features work without internet access, activating online enhancements only when connectivity is available. Robust error handling gracefully manages failures—like unavailable models or network issues—by falling back to defaults, ensuring a seamless user experience.
 
 ## Database Management
 
@@ -26,12 +26,12 @@ This schema uses foreign keys for relational integrity and JSON fields for adapt
 ## API Design and Endpoints
 
 The RESTful APIs are structured by functionality:
-- **Yell Mode**: `/api/yell/trigger` handles screenshot processing and alerts.
+- **Yell Mode**: `/api/yell/trigger` handles screenshot processing reminders.
 - **Yap Mode**: `/api/yap/transcribe` converts speech into actionable tasks.
 - **Flow Mode**: `/api/flow/insights` delivers productivity insights.
 - **Shared**: `/api/activity/log` records activities across all modes.
 
-Each endpoint is linked to a controller that delegates tasks to specialized services (e.g., `aiService.js`, `ttsService.js`), keeping the API layer focused on routing and response management for clear and predictable communication with the frontend.
+Each endpoint is linked to a controller that delegates tasks to specialized services (e.g., `ttsService.js`), keeping the API layer focused on routing and response management for clear and predictable communication with the frontend.
 
 ## Hosting Solutions
 
@@ -42,7 +42,6 @@ During development, the backend runs locally with Node.js alongside the frontend
 Key components include:
 - **Express.js Server**: Manages API requests and responses.
 - **Supabase Database**: Provides data storage and real-time updates.
-- **Local AI Models**: TensorFlow.js powers on-device analytics.
 - **External APIs**: Whisper, GPT-4, ElevenLabs, and Twitter API enhance functionality.
 
 The modular design allows seamless upgrades to individual components with minimal impact.
@@ -61,7 +60,7 @@ These measures ensure a secure foundation, even in offline scenarios.
 - **Logging**: Implemented with **Winston** or **Morgan** to track usage and errors.
 - **Error Handling**: Ensures continuity with fallback mechanisms.
 
-The modular structure simplifies updates to dependencies and AI models.
+The modular structure simplifies updates to dependencies and external services.
 
 ## Conclusion
 

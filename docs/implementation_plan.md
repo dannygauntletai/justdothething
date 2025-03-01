@@ -1,199 +1,131 @@
-# Implementation Plan for JustDoTheThing.ai
+Implementation Plan for JustDoTheThing.ai
 
-## Project Setup
+Project Setup
+1. Create the project root directory: justdothething.
+2. Navigate into the root directory.
+3. Initialize a Node.js project with default settings.
+4. Install Yarn globally if not already installed.
+5. Set up Yarn Workspaces in the root package.json for frontend and backend.
+6. Create a frontend/ directory in the root.
+7. Inside frontend/, create subdirectories: packages/website, packages/shared.
+8. Create a backend/ directory in the root.
+9. Initialize a Git repository in the root.
+10. Create a .gitignore file in the root with common exclusions (e.g., node_modules/, .env).
+11. Commit the initial project structure to Git.
 
-- [x] **Step 1**: Create the project root directory: `justdothething`.
-- [x] **Step 2**: Navigate into the root directory.
-- [x] **Step 3**: Initialize a Node.js project with default settings.
-- [x] **Step 4**: Install Yarn globally if not already installed.
-- [x] **Step 5**: Set up Yarn Workspaces in the root `package.json` for frontend and backend.
-- [x] **Step 6**: Create a `frontend/` directory in the root.
-- [x] **Step 7**: Inside `frontend/`, create subdirectories: `packages/chrome-extension`, `packages/website`, `packages/shared`.
-- [x] **Step 8**: Create a `backend/` directory in the root.
-- [x] **Step 9**: Initialize a Git repository in the root.
-- [x] **Step 10**: Create a `.gitignore` file in the root with common exclusions (e.g., `node_modules/`, `.env`).
-- [x] **Step 11**: Commit the initial project structure to Git.
+Backend Setup
+12. Navigate to the backend/ directory.
+13. Initialize a Node.js project in backend/.
+14. Install Express.js as the backend framework.
+15. Create a src/ directory in backend/.
+16. Create an app.js file in backend/src/ for the Express app.
+17. Install dotenv for environment variable management.
+18. Create a .env file in backend/ with placeholders (e.g., SUPABASE_URL, OPENAI_API_KEY).
+19. Configure app.js to load environment variables using dotenv.
+20. Install the Supabase JavaScript client in backend/.
+21. Create a config/ directory in backend/src/.
+22. Create supabase.js in config/ to initialize the Supabase client.
+23. Open the Supabase dashboard and locate your project's SUPABASE_URL and SUPABASE_KEY.
+24. Add SUPABASE_URL and SUPABASE_KEY to backend/.env.
+25. Test the Supabase connection by running a simple query from app.js.
 
----
+Database Configuration
+26. In Supabase, create a users table with columns: id (UUID), settings (JSON).
+27. Create a screenshots table with columns: id (Integer), user_id (UUID), timestamp (Datetime), hash (Varchar), classification (Varchar), confidence (Float).
+28. Enable Row-Level Security (RLS) for the users table.
+29. Enable RLS for the screenshots table.
+30. Create an RLS policy for users to allow authenticated users to access their own data.
+31. Create an RLS policy for screenshots to restrict access to the user's own screenshots.
+32. Test RLS by inserting a sample user and querying as an authenticated user.
 
-## Backend Setup
+Authentication
+33. Create a middleware/ directory in backend/src/.
+34. Create authMiddleware.js in middleware/ to validate Supabase JWT tokens.
+35. Install jsonwebtoken in backend/ for token verification.
+36. Update authMiddleware.js to decode and verify tokens.
+37. Add a /api/auth/test endpoint in app.js to test authentication.
+38. Manually test the test endpoint with a valid Supabase JWT.
 
-- [x] **Step 12**: Navigate to the `backend/` directory.
-- [x] **Step 13**: Initialize a Node.js project in `backend/`.
-- [x] **Step 14**: Install Express.js as the backend framework.
-- [x] **Step 15**: Create a `src/` directory in `backend/`.
-- [x] **Step 16**: Create an `app.js` file in `backend/src/` for the Express app.
-- [x] **Step 17**: Install `dotenv` for environment variable management.
-- [x] **Step 18**: Create a `.env` file in `backend/` with placeholders (e.g., `SUPABASE_URL`, `OPENAI_API_KEY`).
-- [x] **Step 19**: Configure `app.js` to load environment variables using `dotenv`.
-- [x] **Step 20**: Install the Supabase JavaScript client in `backend/`.
-- [x] **Step 21**: Create a `config/` directory in `backend/src/`.
-- [x] **Step 22**: Create `supabase.js` in `config/` to initialize the Supabase client.
-- [x] **Step 23**: Open the Supabase dashboard and locate your project's `SUPABASE_URL` and `SUPABASE_KEY`.
-- [x] **Step 24**: Add `SUPABASE_URL` and `SUPABASE_KEY` to `backend/.env`.
-- [x] **Step 25**: Test the Supabase connection by running a simple query from `app.js`.
+Yell Mode (Local TensorFlow.js)
+39. Install TensorFlow.js in frontend/packages/website/.
+40. Create a services/ directory in frontend/packages/website/src/.
+41. Create screenshotService.js in services/ to handle screenshot capture logic.
+42. Create imageClassificationService.js in services/ai/ to classify screenshots using TensorFlow.js locally.
+43. Install html2canvas in frontend/packages/website/ for screenshot capture.
+44. Implement screenshot capture and classification logic in the website frontend.
+45. Use browser-based text-to-speech (e.g., Web Speech API) for yell generation.
+46. Create yellRoutes.js in backend/src/routes/ with a /trigger endpoint to save classification results.
+47. Mount yellRoutes.js in app.js under /api/yell.
 
----
+Testing the MVP
+48. Install Jest in frontend/packages/website/ for unit testing.
+49. Create a __tests__/ directory in frontend/packages/website/src/services/.
+50. Write a unit test for imageClassificationService.js.
+51. Run Jest tests in frontend/packages/website/.
+52. Test the website by simulating screenshot capture and classification.
+53. Verify the yell audio plays for non-work screenshots.
 
-## Database Configuration
+Yap Mode (Local Processing)
+54. Create sttService.js in frontend/packages/website/src/services/ for speech-to-text using Web Speech API.
+55. Create nlpService.js in frontend/packages/website/src/services/ai/ for local NLP processing with TensorFlow.js.
+56. Integrate speech recognition and task extraction in the website frontend.
+57. Create yapRoutes.js in backend/src/routes/ with a /transcribe endpoint to save tasks.
+58. Mount yapRoutes.js in app.js under /api/yap.
+59. Test speech-to-text and task extraction manually in the website.
 
-- [x] **Step 26**: In Supabase, create a `users` table with columns: `id (UUID)`, `settings (JSON)`.
-- [x] **Step 27**: Create a `screenshots` table with columns: `id (Integer)`, `user_id (UUID)`, `timestamp (Datetime)`, `hash (Varchar)`, `classification (Varchar)`, `confidence (Float)`.
-- [x] **Step 28**: Enable Row-Level Security (RLS) for the `users` table.
-- [x] **Step 29**: Enable RLS for the `screenshots` table.
-- [x] **Step 30**: Create an RLS policy for `users` to allow authenticated users to access their own data.
-- [x] **Step 31**: Create an RLS policy for `screenshots` to restrict access to the user's own screenshots.
-- [x] **Step 32**: Test RLS by inserting a sample user and querying as an authenticated user.
+Website Development
+60. Navigate to frontend/packages/website/.
+61. Initialize a Node.js project in the website directory.
+62. Install Vite, React, and Vite's React plugin in website/.
+63. Create a src/ directory in website/.
+64. Create main.js in src/ as the website's entry point.
+65. Create App.js in src/ with a basic dashboard layout.
+66. Create index.html in website/public/ with a root div.
+67. Install React Router in website/.
+68. Create a pages/ directory in website/src/.
+69. Create Dashboard.js in pages/ for the main view.
+70. Create Settings.js in pages/ for user settings.
+71. Configure routing in App.js with React Router.
+72. Build the website using Vite and test locally.
 
----
+Shared Components
+73. Navigate to frontend/packages/shared/.
+74. Initialize a Node.js project in the shared directory.
+75. Create a ui-components/ directory in shared/.
+76. Create TaskCard.js in ui-components/ for reusable task UI.
+77. Create ModeToggle.js in ui-components/ for mode controls.
+78. Link the shared package to website/ via Yarn Workspaces.
 
-## Authentication
+Performance and Security
+79. Implement caching for screenshot hashes in frontend/packages/website/src/services/screenshotService.js.
+80. Add input validation for user inputs in the frontend services.
+81. Ensure authMiddleware.js is used for all protected routes in the backend.
 
-- [x] **Step 33**: Create a `middleware/` directory in `backend/src/`.
-- [x] **Step 34**: Create `authMiddleware.js` in `middleware/` to validate Supabase JWT tokens.
-- [x] **Step 35**: Install `jsonwebtoken` in `backend/` for token verification.
-- [x] **Step 36**: Update `authMiddleware.js` to decode and verify tokens.
-- [x] **Step 37**: Add a `/api/auth/test` endpoint in `app.js` to test authentication.
-- [x] **Step 38**: Manually test the test endpoint with a valid Supabase JWT.
+Authentication Integration
+82. Create centralized API service for authenticated requests in frontend/packages/website/src/services/.
+83. Update AuthContext to handle both Supabase and backend authentication in website/.
+84. Implement database user synchronization in Dashboard.js.
+85. Add proper environment variable type definitions for Vite in website/vite.config.js.
+86. Update login flow to properly authenticate with backend in website/.
 
----
+Testing and QA
+87. Install Cypress in frontend/packages/website/ for end-to-end testing.
+88. Configure Cypress with a base URL in cypress.config.js.
+89. Write an E2E test for Yell Mode in cypress/e2e/.
+90. Run Cypress tests and verify Yell Mode works.
+91. Install Artillery in backend/ for load testing.
+92. Create a load test script for /trigger in backend/.
+93. Run the load test and analyze results.
 
-## Yell Mode Backend (MVP)
-
-- [ ] **Step 39**: Install `image-hash` in `backend/` for screenshot hashing.
-- [ ] **Step 40**: Create a `services/` directory in `backend/src/`.
-- [ ] **Step 41**: Create `screenshotService.js` in `services/` with a function to hash screenshots.
-- [ ] **Step 42**: Install TensorFlow.js and MobileNet in `backend/`.
-- [ ] **Step 43**: Create `imageClassificationService.js` in `services/` to classify screenshots.
-- [ ] **Step 44**: Install `axios` in `backend/` for external API calls (e.g., ElevenLabs).
-- [ ] **Step 45**: Create `ttsService.js` in `services/` to generate yells via ElevenLabs.
-- [ ] **Step 46**: Create a `routes/` directory in `backend/src/`.
-- [ ] **Step 47**: Create `yellRoutes.js` in `routes/` with a `/trigger` endpoint.
-- [ ] **Step 48**: Mount `yellRoutes.js` in `app.js` under `/api/yell`.
-- [ ] **Step 49**: Implement screenshot hashing in the `/trigger` endpoint.
-- [ ] **Step 50**: Add screenshot classification to the `/trigger` endpoint.
-- [ ] **Step 51**: Integrate text-to-speech in `/trigger` to yell when screenshots aren't work-related.
-- [ ] **Step 52**: Test the `/trigger` endpoint with a sample screenshot manually.
-
----
-
-## Chrome Extension (MVP)
-
-- [x] **Step 53**: Navigate to `frontend/packages/chrome-extension/`.
-- [x] **Step 54**: Initialize a Node.js project in the extension directory.
-- [x] **Step 55**: Create a `public/` directory in `chrome-extension/`.
-- [x] **Step 56**: Create `manifest.json` in `public/` with basic extension metadata.
-- [x] **Step 57**: Install React, Vite, and Vite's React plugin in `chrome-extension/`.
-- [x] **Step 58**: Create a `popup/` directory in `chrome-extension/`.
-- [x] **Step 59**: Create `popup/index.html` as the extension's UI entry point.
-- [x] **Step 60**: Create `popup/App.js` with a React component for mode toggles.
-- [x] **Step 61**: Create a `background/` directory in `chrome-extension/`.
-- [x] **Step 62**: Create `background/index.js` to handle authentication.
-- [x] **Step 63**: Configure Vite to build the extension (create `vite.config.js`).
-- [x] **Step 64**: Build the extension using Vite.
-- [x] **Step 65**: Load the extension in Chrome manually to verify it works.
-
----
-
-## Testing the MVP
-
-- [ ] **Step 66**: Install Jest in `backend/` for unit testing.
-- [ ] **Step 67**: Create a `__tests__/` directory in `backend/src/services/`.
-- [ ] **Step 68**: Write a unit test for `imageClassificationService.js`.
-- [ ] **Step 69**: Run Jest tests in `backend/`.
-- [ ] **Step 70**: Test the Chrome extension by capturing a screenshot and sending it to `/trigger`.
-- [ ] **Step 71**: Verify the yell audio plays for non-work screenshots.
-
----
-
-## Yap Mode Backend
-
-- [ ] **Step 72**: Create `yapRoutes.js` in `backend/src/routes/` with a `/transcribe` endpoint.
-- [ ] **Step 73**: Mount `yapRoutes.js` in `app.js` under `/api/yap`.
-- [ ] **Step 74**: Install the OpenAI SDK in `backend/`.
-- [ ] **Step 75**: Create `sttService.js` in `services/` for speech-to-text with Whisper.
-- [ ] **Step 76**: Implement speech-to-text in the `/transcribe` endpoint.
-- [ ] **Step 77**: Create `nlpService.js` in `services/` to extract tasks from transcriptions using GPT-4.
-- [ ] **Step 78**: Install the Twitter API client in `backend/`.
-- [ ] **Step 79**: Create `recommendationService.js` in `services/` for tool suggestions via Twitter.
-- [ ] **Step 80**: Integrate task extraction and recommendations into `/transcribe`.
-- [ ] **Step 81**: Test `/transcribe` with a sample audio file manually.
-
----
-
-## Website Development
-
-- [x] **Step 82**: Navigate to `frontend/packages/website/`.
-- [x] **Step 83**: Initialize a Node.js project in the website directory.
-- [x] **Step 84**: Install Vite, React, and Vite's React plugin in `website/`.
-- [x] **Step 85**: Create a `src/` directory in `website/`.
-- [x] **Step 86**: Create `main.js` in `src/` as the website's entry point.
-- [x] **Step 87**: Create `App.js` in `src/` with a basic dashboard layout.
-- [x] **Step 88**: Create `index.html` in `website/` with a root div.
-- [x] **Step 89**: Install React Router in `website/`.
-- [x] **Step 90**: Create a `pages/` directory in `website/src/`.
-- [x] **Step 91**: Create `Dashboard.js` in `pages/` for the main view.
-- [x] **Step 92**: Create `Settings.js` in `pages/` for user settings.
-- [x] **Step 93**: Configure routing in `App.js` with React Router.
-- [x] **Step 94**: Build the website using Vite and test locally.
-
----
-
-## Shared Components
-
-- [x] **Step 95**: Navigate to `frontend/packages/shared/`.
-- [x] **Step 96**: Initialize a Node.js project in the shared directory.
-- [x] **Step 97**: Create a `ui-components/` directory in `shared/`.
-- [x] **Step 98**: Create `TaskCard.js` in `ui-components/` for reusable task UI.
-- [x] **Step 99**: Create `ModeToggle.js` in `ui-components/` for mode controls.
-- [x] **Step 100**: Link the shared package to `website/` and `chrome-extension/` via Yarn Workspaces.
-
----
-
-## Performance and Security
-
-- [ ] **Step 101**: Install `node-cache` in `backend/` for caching.
-- [ ] **Step 102**: Add caching to `screenshotService.js` for hashed screenshots.
-- [ ] **Step 103**: Install `express-validator` in `backend/`.
-- [ ] **Step 104**: Add input validation to `/trigger` in `yellRoutes.js`.
-- [x] **Step 105**: Strengthen `authMiddleware.js` with JWT validation for all protected routes.
-
----
-
-## Authentication Integration
-
-- [x] **Step 124**: Create centralized API service for authenticated requests.
-- [x] **Step 125**: Update AuthContext to handle both Supabase and backend authentication.
-- [x] **Step 126**: Implement database user synchronization in dashboard.
-- [x] **Step 127**: Add proper environment variable type definitions for Vite.
-- [x] **Step 128**: Update login flow to properly authenticate with backend.
-
----
-
-## Testing and QA
-
-- [ ] **Step 106**: Install Cypress in `backend/` for end-to-end testing.
-- [ ] **Step 107**: Configure Cypress with a base URL in `cypress.config.js`.
-- [ ] **Step 108**: Write an E2E test for Yell Mode in `cypress/e2e/`.
-- [ ] **Step 109**: Run Cypress tests and verify Yell Mode works.
-- [ ] **Step 110**: Install Artillery in `backend/` for load testing.
-- [ ] **Step 111**: Create a load test script for `/trigger` in `backend/`.
-- [ ] **Step 112**: Run the load test and analyze results.
-
----
-
-## Production Readiness
-
-- [ ] **Step 113**: Create a `landing/` directory in the root for a landing page.
-- [ ] **Step 114**: Initialize a Vite project in `landing/`.
-- [ ] **Step 115**: Build a simple landing page in `landing/`.
-- [ ] **Step 116**: Deploy the landing page to Vercel.
-- [ ] **Step 117**: Install Stripe in `backend/`.
-- [ ] **Step 118**: Create `subscriptionService.js` in `backend/src/services/` for payments.
-- [ ] **Step 119**: Create `subscriptionRoutes.js` with a `/create` endpoint.
-- [ ] **Step 120**: Mount `subscriptionRoutes.js` in `app.js` under `/api/subscription`.
-- [ ] **Step 121**: Update the `users` table in Supabase with a `subscription_id` column.
-- [ ] **Step 122**: Deploy the backend to a hosting provider (e.g., Render).
-- [ ] **Step 123**: Deploy the website to Vercel.
-
----
+Production Readiness
+94. Create a landing/ directory in the root for a landing page.
+95. Initialize a Vite project in landing/.
+96. Build a simple landing page in landing/.
+97. Deploy the landing page to Vercel.
+98. Install Stripe in backend/.
+99. Create subscriptionService.js in backend/src/services/ for payments.
+100. Create subscriptionRoutes.js with a /create endpoint.
+101. Mount subscriptionRoutes.js in app.js under /api/subscription.
+102. Update the users table in Supabase with a subscription_id column.
+103. Deploy the backend to a hosting provider (e.g., Render).
+104. Deploy the website to Vercel.
