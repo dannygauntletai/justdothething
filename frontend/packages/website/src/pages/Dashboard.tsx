@@ -5,14 +5,24 @@ import { api } from '../../../shared/utils/api';
 import YellMode from '../components/YellMode/YellMode';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import { Progress } from '../components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+
+// Define session type
+interface SessionSummary {
+  id: number;
+  title: string;
+  date: string;
+  duration: string;
+  summary: string;
+}
 
 function Dashboard() {
   const { user, session, dbUser, isLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [verifyingBackend, setVerifyingBackend] = useState(false);
   const hasCheckedAuth = useRef(false);
+  const [showSessionSummary, setShowSessionSummary] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<SessionSummary | null>(null);
 
   // When the component loads, perform a backend auth check
   useEffect(() => {
@@ -51,6 +61,15 @@ function Dashboard() {
     navigate('/login');
   };
 
+  const handleOpenSessionSummary = (session: SessionSummary) => {
+    setSelectedSession(session);
+    setShowSessionSummary(true);
+  };
+
+  const handleCloseSessionSummary = () => {
+    setShowSessionSummary(false);
+  };
+
   if (isLoading || verifyingBackend) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -62,106 +81,61 @@ function Dashboard() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className="w-60 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200 flex items-center space-x-2">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-blue-600">
-            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-          </svg>
-          <h1 className="font-bold text-lg">AI Focus Buddy</h1>
-        </div>
-        
-        <nav className="flex-1 p-2">
-          <div className="space-y-1">
-            <a href="#" className="flex items-center p-2 rounded-md bg-blue-50 text-blue-700 font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-              Dashboard
-            </a>
-            
-            <a href="#" className="flex items-center p-2 rounded-md text-gray-700 hover:bg-gray-50">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              Schedule
-            </a>
-            
-            <a href="#" className="flex items-center p-2 rounded-md text-gray-700 hover:bg-gray-50">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              Focus History
-            </a>
-            
-            <a href="#" className="flex items-center p-2 rounded-md text-gray-700 hover:bg-gray-50">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              Settings
-            </a>
-          </div>
-        </nav>
-      </div>
+  // Placeholder session data
+  const placeholderSessions: SessionSummary[] = [
+    {
+      id: 1,
+      title: "Project Brainstorm",
+      date: "Today, 2:30 PM",
+      duration: "15 min",
+      summary: "Discussion about the new landing page design. Key points included improving the hero section, adding more social proof, and streamlining the signup process. Action items: create mockups for hero section variations, research competitor landing pages, schedule follow-up meeting for next week."
+    },
+    {
+      id: 2,
+      title: "Weekly Planning",
+      date: "Yesterday, 10:15 AM",
+      duration: "22 min",
+      summary: "Weekly planning session covering upcoming deadlines and project priorities. Identified three critical tasks for the week: complete dashboard redesign, fix user authentication bugs, and prepare for client presentation on Thursday. Allocated time blocks for deep work and scheduled necessary meetings."
+    }
+  ];
 
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Main content */}
       <div className="flex-1 overflow-auto">
         <header className="bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-10">
           <div>
-            <h1 className="text-2xl font-bold">Welcome back, {user?.user_metadata?.name || user?.email?.split('@')[0] || 'John'}!</h1>
+            <h1 className="text-2xl font-bold">JustDoTheThing.ai</h1>
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="py-1 px-2 text-xs bg-gray-800 text-white rounded-full">
-                7 day streak
-              </span>
-            </div>
             <Button onClick={handleSignOut} variant="outline" size="sm">Sign out</Button>
           </div>
         </header>
 
         <main className="p-6 max-w-6xl mx-auto">
-          {/* AI Insight Section */}
-          <Card className="bg-black text-white mb-6">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <CardTitle>AI Insight</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p>Your focus score has improved by 15% this week. Keep up the great work!</p>
-            </CardContent>
-          </Card>
-
           {/* Mode Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            {/* Flow Mode */}
-            <Card className="flex flex-col items-center">
+            {/* Flow Mode - Grayed out */}
+            <Card className="flex flex-col items-center opacity-50 cursor-not-allowed">
               <CardHeader className="text-center">
                 <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center mb-4 mx-auto">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <CardTitle>Flow Mode</CardTitle>
                 <CardDescription>
-                  AI-optimized deep work sessions
+                  Data collection and analysis for productivity insights
                 </CardDescription>
               </CardHeader>
               <CardFooter className="w-full mt-auto">
-                <Button variant="dark" className="w-full">
-                  Start Flow
+                <Button variant="dark" className="w-full" disabled>
+                  Coming Soon
                 </Button>
               </CardFooter>
             </Card>
-
+            
             {/* Yap Mode */}
             <Card className="flex flex-col items-center">
               <CardHeader className="text-center">
@@ -187,22 +161,15 @@ function Dashboard() {
           </div>
 
           {/* Stats and Info Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            {/* AI-Enhanced Focus Stats */}
-            <Card>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            {/* AI-Insights - Grayed out */}
+            <Card className="opacity-60 cursor-not-allowed">
               <CardHeader className="pb-2">
-                <CardTitle>AI-Enhanced Focus Stats</CardTitle>
-                <CardDescription>Personalized productivity insights</CardDescription>
+                <CardTitle>AI-Insights</CardTitle>
+                <CardDescription>Chronotype and behavioral patterns</CardDescription>
+                <div className="mt-2 inline-block px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded">Coming Soon</div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Daily Goal (AI-adjusted)</span>
-                    <span className="font-medium">68%</span>
-                  </div>
-                  <Progress value={68} className="h-2.5" />
-                </div>
-
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center">
@@ -214,10 +181,26 @@ function Dashboard() {
                   
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center">
-                      <span className="w-3 h-3 rounded-full bg-gray-500 mr-2"></span>
+                      <span className="w-3 h-3 rounded-full bg-amber-500 mr-2"></span>
+                      <span>Chronotype</span>
+                    </div>
+                    <span className="font-medium">Morning Lark</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center">
+                      <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
                       <span>Focus Score</span>
                     </div>
                     <span className="font-medium">8.7 / 10</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center">
+                      <span className="w-3 h-3 rounded-full bg-purple-500 mr-2"></span>
+                      <span>Deep Work Capacity</span>
+                    </div>
+                    <span className="font-medium">2.5 hours</span>
                   </div>
                 </div>
               </CardContent>
@@ -248,85 +231,73 @@ function Dashboard() {
                   </li>
                 </ul>
               </CardContent>
-              <CardFooter className="pt-0 flex justify-end">
-                <Button variant="link" className="text-sm text-gray-600 p-0">
-                  View AI-Optimized Schedule
-                </Button>
-              </CardFooter>
             </Card>
 
-            {/* AI Focus Challenges */}
+            {/* Session Summaries */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle>AI Focus Challenges</CardTitle>
-                <CardDescription>Gamified productivity boosters</CardDescription>
+                <CardTitle>Session Summaries</CardTitle>
+                <CardDescription>Yap session transcriptions and insights</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-gray-100 p-3 rounded-lg">
-                  <div className="flex items-center">
-                    <span className="text-yellow-500 mr-2">🌟</span>
-                    <div>
-                      <h4 className="font-medium text-sm">Deep Work Master</h4>
-                      <p className="text-xs text-gray-600">Complete 5 days of 3+ hour deep work sessions</p>
+                {placeholderSessions.map((session) => (
+                  <div 
+                    key={session.id} 
+                    className="bg-gray-100 p-3 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors"
+                    onClick={() => handleOpenSessionSummary(session)}
+                  >
+                    <div className="flex items-center">
+                      <span className="text-purple-500 mr-2">🎙️</span>
+                      <div>
+                        <h4 className="font-medium text-sm">{session.title}</h4>
+                        <p className="text-xs text-gray-600">{session.date} • {session.duration}</p>
+                      </div>
                     </div>
-                    <div className="ml-auto text-xs bg-gray-200 px-2 py-1 rounded">2/5 Days</div>
                   </div>
-                </div>
+                ))}
               </CardContent>
-              <CardFooter className="pt-0">
-                <Button variant="dark" className="w-full">
-                  Join Weekly AI Challenge
-                </Button>
-              </CardFooter>
             </Card>
           </div>
-
-          {/* Personalized AI Insights */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Personalized AI Insights</CardTitle>
-              <CardDescription>Tailored productivity recommendations</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 bg-gray-100 p-2 rounded-lg mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-medium">Productivity Pattern Detected</h3>
-                  <p className="text-sm text-gray-600">Your focus peaks after short breaks. Try the Pomodoro technique.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start">
-                <div className="flex-shrink-0 bg-gray-100 p-2 rounded-lg mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-medium">Optimal Break Suggestion</h3>
-                  <p className="text-sm text-gray-600">A 15-minute walk at 2 PM could boost your afternoon productivity.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start">
-                <div className="flex-shrink-0 bg-gray-100 p-2 rounded-lg mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-medium">Learning Opportunity</h3>
-                  <p className="text-sm text-gray-600">Based on your work patterns, learning keyboard shortcuts could save you 30 minutes daily.</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </main>
       </div>
+
+      {/* Session summary modal */}
+      {showSessionSummary && selectedSession && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">{selectedSession.title}</h3>
+                <button 
+                  onClick={handleCloseSessionSummary}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="mb-4">
+                <div className="text-sm text-gray-500 mb-1">{selectedSession.date} • {selectedSession.duration}</div>
+                <p className="text-gray-700 leading-relaxed">{selectedSession.summary}</p>
+              </div>
+              <div className="pt-4 border-t border-gray-200">
+                <h4 className="font-medium mb-2">Key Takeaways</h4>
+                <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                  <li>Improve hero section design</li>
+                  <li>Add more customer testimonials</li>
+                  <li>Simplify sign-up process</li>
+                  <li>Schedule follow-up meeting next week</li>
+                </ul>
+              </div>
+            </div>
+            <div className="bg-gray-50 px-6 py-3 flex justify-end rounded-b-lg">
+              <Button onClick={handleCloseSessionSummary} variant="outline" className="mr-2">Close</Button>
+              <Button>Download Summary</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
