@@ -1,0 +1,1 @@
+{"buildCommand":"yarn vercel-build","outputDirectory":"frontend/packages/website/dist","framework":"vite","rewrites":[{"source":"/(.*)", "destination":"/index.html"}]}

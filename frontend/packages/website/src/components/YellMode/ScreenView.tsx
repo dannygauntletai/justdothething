@@ -25,13 +25,15 @@ const ScreenView: React.FC<ScreenViewProps> = ({
             <img 
               src={screenshot} 
               alt="Screen capture" 
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain max-w-full"
             />
-            <div className="absolute bottom-0 left-0 right-0 px-3 py-1 bg-black/60 text-white text-xs">
-              {isWork
-                ? "Working content detected"
-                : "Non-work content detected"}
-              {confidence > 0 && ` (${(confidence * 100).toFixed(0)}% confidence)`}
+            <div className="absolute bottom-0 left-0 right-0 px-2 sm:px-3 py-1 bg-black/60 text-white text-xs">
+              <div className="truncate">
+                {isWork
+                  ? "Working content detected"
+                  : "Non-work content detected"}
+                {confidence > 0 && ` (${(confidence * 100).toFixed(0)}% confidence)`}
+              </div>
             </div>
           </div>
           

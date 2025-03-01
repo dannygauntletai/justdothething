@@ -1,7 +1,14 @@
 import { supabase } from './supabase';
 
-// Use import.meta.env instead of process.env for Vite projects
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+// Determine if we're in production based on environment variable
+const isProduction = import.meta.env.VITE_NODE_ENV === 'production';
+
+// Use the appropriate API URL based on environment
+const API_URL = isProduction 
+  ? import.meta.env.VITE_API_URL_PROD 
+  : import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
+console.log(`Using API URL: ${API_URL} in ${isProduction ? 'production' : 'development'} mode`);
 
 // Session cache
 let cachedSession = null;

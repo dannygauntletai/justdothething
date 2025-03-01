@@ -11,7 +11,12 @@
   "scripts": {
     "backend:start": "cd backend && yarn start",
     "extension:dev": "cd frontend/packages/chrome-extension && yarn dev",
-    "website:dev": "cd frontend/packages/website && yarn dev"
+    "website:dev": "cd frontend/packages/website && yarn dev",
+    "build": "yarn build:website && yarn build:backend",
+    "build:website": "cd frontend/packages/website && yarn build",
+    "build:backend": "cd backend && yarn build",
+    "start": "cd backend && yarn start",
+    "vercel-build": "yarn build:website"
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.1.2",

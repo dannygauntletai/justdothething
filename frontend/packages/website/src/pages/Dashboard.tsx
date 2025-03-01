@@ -113,9 +113,9 @@ function Dashboard() {
           </div>
         </header>
 
-        <main className="p-6 max-w-6xl mx-auto">
+        <main className="p-4 sm:p-6 max-w-6xl mx-auto">
           {/* Mode Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
             {/* Flow Mode - Grayed out */}
             <Card className="flex flex-col items-center opacity-50 cursor-not-allowed">
               <CardHeader className="text-center">
@@ -161,7 +161,7 @@ function Dashboard() {
           </div>
 
           {/* Stats and Info Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
             {/* AI-Insights - Grayed out */}
             <Card className="opacity-60 cursor-not-allowed">
               <CardHeader className="pb-2">

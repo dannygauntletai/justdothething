@@ -26,27 +26,27 @@ const Landing = () => {
         <section className="py-12 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
-              <div>
+              <div className="text-center lg:text-left">
                 <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
                   <span className="block">Do The Thing.</span>
                   <span className="block text-blue-600">With AI Assistance.</span>
                 </h1>
-                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg md:text-xl max-w-xl">
+                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg md:text-xl max-w-xl mx-auto lg:mx-0">
                   A productivity app designed to help you maintain focus and manage tasks effectively with 
                   AI-powered interventions, real-time monitoring, and personalized insights.
                 </p>
-                <div className="mt-8">
+                <div className="mt-8 flex justify-center lg:justify-start">
                   <Link to="/login">
                     <Button size="lg" className="px-8">Start Your Productivity Journey</Button>
                   </Link>
                 </div>
               </div>
               <div className="mt-12 lg:mt-0">
-                <div className="bg-gray-100 rounded-lg p-8 shadow-lg">
+                <div className="bg-gray-100 rounded-lg p-4 sm:p-6 lg:p-8 shadow-lg">
                   <img 
                     src="https://placehold.co/600x400?text=JustDoTheThing.ai" 
                     alt="Productivity Illustration" 
-                    className="w-full h-auto rounded-md"
+                    className="w-full h-auto rounded-md max-w-full mx-auto"
                   />
                 </div>
               </div>
@@ -64,7 +64,7 @@ const Landing = () => {
               </p>
             </div>
 
-            <div className="mt-12 grid gap-8 md:grid-cols-3">
+            <div className="mt-12 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
               {/* Yell Mode */}
               <Card>
                 <CardHeader>
@@ -192,28 +192,28 @@ const Landing = () => {
               </p>
             </div>
 
-            <div className="mt-12">
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div className="mt-8 sm:mt-12">
+              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
                 <div className="text-center">
-                  <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-900 text-xl font-bold">1</div>
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">Sign Up</h3>
-                  <p className="mt-2 text-base text-gray-500">
+                  <div className="mx-auto flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-100 text-blue-900 text-lg sm:text-xl font-bold">1</div>
+                  <h3 className="mt-3 sm:mt-4 text-lg font-medium text-gray-900">Sign Up</h3>
+                  <p className="mt-2 text-sm sm:text-base text-gray-500">
                     Create your account in seconds and set up your preferences.
                   </p>
                 </div>
 
                 <div className="text-center">
-                  <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-900 text-xl font-bold">2</div>
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">Choose Your Mode</h3>
-                  <p className="mt-2 text-base text-gray-500">
+                  <div className="mx-auto flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-100 text-blue-900 text-lg sm:text-xl font-bold">2</div>
+                  <h3 className="mt-3 sm:mt-4 text-lg font-medium text-gray-900">Choose Your Mode</h3>
+                  <p className="mt-2 text-sm sm:text-base text-gray-500">
                     Select from Yell, Yap, or Flow (upcoming) modes based on your current needs.
                   </p>
                 </div>
 
                 <div className="text-center">
-                  <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-900 text-xl font-bold">3</div>
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">Boost Productivity</h3>
-                  <p className="mt-2 text-base text-gray-500">
+                  <div className="mx-auto flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-100 text-blue-900 text-lg sm:text-xl font-bold">3</div>
+                  <h3 className="mt-3 sm:mt-4 text-lg font-medium text-gray-900">Boost Productivity</h3>
+                  <p className="mt-2 text-sm sm:text-base text-gray-500">
                     Let our AI help you stay focused and accomplish more every day.
                   </p>
                 </div>

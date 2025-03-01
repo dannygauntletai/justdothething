@@ -1,71 +1,115 @@
-backend/
-├── src/
-│   ├── config/
-│   │   ├── supabase.js           # Supabase client initialization
-│   │   └── apiKeys.js            # API key management
-│   ├── controllers/
-│   │   ├── yellController.js     # Logic for Yell Mode API endpoints
-│   │   ├── yapController.js      # Logic for Yap Mode API endpoints
-│   │   └── flowController.js     # Logic for Flow Mode API endpoints (future)
-│   ├── services/
-│   │   ├── unionFindService.js   # Union-Find for task grouping (if needed)
-│   │   └── ttsService.js         # Text-to-speech via external API (e.g., ElevenLabs)
-│   ├── repositories/
-│   │   ├── userRepository.js     # User data operations with Supabase
-│   │   ├── activityRepository.js # Activity tracking operations
-│   │   └── taskRepository.js     # Task persistence operations
-│   ├── middleware/
-│   │   └── authMiddleware.js     # JWT validation for protected routes
-│   ├── routes/
-│   │   ├── yellRoutes.js         # Yell Mode API routes
-│   │   ├── yapRoutes.js          # Yap Mode API routes
-│   │   └── flowRoutes.js         # Flow Mode API routes (future)
-│   ├── utils/
-│   │   └── helpers.js            # General utility functions
-│   └── app.js                    # Express app entry point
-├── tests/
-│   ├── services/                 # Unit tests for services
-│   └── controllers/              # Unit tests for controllers
-├── package.json                  # Backend dependencies
-└── .env                          # Environment variables (e.g., SUPABASE_URL)
-
-frontend/
-├── packages/
-│   ├── website/
-│   │   ├── src/
-│   │   │   ├── components/       # Reusable React components
-│   │   │   │   ├── TaskCard.js   # Task display component
-│   │   │   │   ├── ModeToggle.js # Mode switcher component
-│   │   │   │   └── ...           # Other UI components
-│   │   │   ├── pages/            # Page-level React components
-│   │   │   │   ├── Dashboard.js  # Main dashboard view
-│   │   │   │   ├── Settings.js   # User settings view
-│   │   │   │   └── ...           # Other pages
-│   │   │   ├── services/
-│   │   │   │   ├── ai/           # Local AI processing with TensorFlow.js
-│   │   │   │   │   ├── workClassificationService.ts  # Screenshot classification for work content
-│   │   │   │   │   ├── visionService.js               # Vision-related AI tasks
-│   │   │   │   │   ├── nlpService.js                  # Local NLP processing
-│   │   │   │   │   ├── recommendationService.js       # Task/tool recommendations
-│   │   │   │   │   ├── timeSeriesService.js          # Time series analysis (future)
-│   │   │   │   │   └── modelUtils.js                 # Model loading utilities
-│   │   │   │   ├── screenshotService.js  # Screenshot capture and preprocessing
-│   │   │   │   └── sttService.js         # Speech-to-text via Web Speech API
-│   │   │   ├── utils/
-│   │   │   │   └── imageUtils.js         # Image processing utilities
-│   │   │   ├── App.js                    # Main React app component
-│   │   │   └── main.js                   # Website entry point
-│   │   ├── public/                       # Static assets
-│   │   │   ├── index.html                # Root HTML file
-│   │   │   └── ...                       # Other static files
-│   │   ├── package.json                  # Website dependencies
-│   │   └── vite.config.js                # Vite configuration
-│   └── shared/
-│   │   ├── ui-components/                # Shared UI components
-│   │   │   ├── TaskCard.js               # Shared task card component
-│   │   │   ├── ModeToggle.js             # Shared mode toggle component
-│   │   │   └── ...                       # Other shared components
-│   │   ├── utils/                        # Shared utility functions
-│   │   └── package.json                  # Shared package dependencies
-├── package.json                          # Frontend workspace dependencies
-└── yarn.lock                             # Yarn lock file
+Directory structure:
+└── dannygauntletai-justdothething/
+    ├── README.md
+    ├── package.json
+    ├── .editorconfig
+    ├── .yarnrc.yml
+    ├── backend/
+    │   ├── README.md
+    │   ├── package.json
+    │   ├── .gitignore
+    │   ├── prisma/
+    │   │   ├── schema.prisma
+    │   │   └── migrations/
+    │   │       ├── migration_lock.toml
+    │   │       ├── 20250228232222_init_schema/
+    │   │       │   └── migration.sql
+    │   │       └── 20250228232416_update_table_names_to_plural/
+    │   │           └── migration.sql
+    │   └── src/
+    │       ├── app.js
+    │       ├── config/
+    │       │   ├── prisma.js
+    │       │   └── supabase.js
+    │       ├── middleware/
+    │       │   └── authMiddleware.js
+    │       └── routes/
+    │           └── authRoutes.js
+    ├── docs/
+    │   ├── backend_structure.md
+    │   ├── database_schema.md
+    │   ├── directory_structure.md
+    │   ├── frontend_guidelines.md
+    │   ├── implementation_plan.md
+    │   ├── prd.md
+    │   └── yap.md
+    └── frontend/
+        └── packages/
+            ├── chrome-extension/
+            │   ├── README.md
+            │   ├── index.html
+            │   ├── package.json
+            │   ├── vite.config.js
+            │   ├── public/
+            │   │   └── manifest.json
+            │   └── src/
+            │       ├── background/
+            │       │   └── index.js
+            │       └── popup/
+            │           ├── App.tsx
+            │           ├── index.html
+            │           ├── index.tsx
+            │           └── useExtensionAuth.tsx
+            ├── shared/
+            │   ├── README.md
+            │   ├── package.json
+            │   ├── types/
+            │   │   └── vite-env.d.ts
+            │   ├── ui-components/
+            │   │   ├── Button.tsx
+            │   │   └── GoogleLoginButton.tsx
+            │   └── utils/
+            │       ├── AuthContext.tsx
+            │       ├── api.ts
+            │       └── supabase.ts
+            └── website/
+                ├── README.md
+                ├── index.html
+                ├── package.json
+                ├── postcss.config.js
+                ├── tailwind.config.js
+                ├── vite.config.js
+                ├── public/
+                │   └── models/
+                │       ├── face_landmark_68/
+                │       │   ├── face_landmark_68_model-shard1
+                │       │   └── face_landmark_68_model-weights_manifest.json
+                │       └── tiny_face_detector/
+                │           ├── tiny_face_detector_model-shard1
+                │           └── tiny_face_detector_model-weights_manifest.json
+                └── src/
+                    ├── App.tsx
+                    ├── index.css
+                    ├── main.tsx
+                    ├── components/
+                    │   ├── ProtectedRoute.tsx
+                    │   ├── YellMode/
+                    │   │   ├── ScreenView.tsx
+                    │   │   ├── WebcamView.tsx
+                    │   │   ├── YellMode.tsx
+                    │   │   ├── YellModeControls.tsx
+                    │   │   └── YellSettingsCard.tsx
+                    │   └── ui/
+                    │       ├── avatar.tsx
+                    │       ├── badge.tsx
+                    │       ├── button.tsx
+                    │       ├── card.tsx
+                    │       ├── progress.tsx
+                    │       ├── separator.tsx
+                    │       └── tabs.tsx
+                    ├── lib/
+                    │   └── utils.ts
+                    ├── pages/
+                    │   ├── AuthCallback.tsx
+                    │   ├── Dashboard.tsx
+                    │   ├── Landing.tsx
+                    │   ├── Login.tsx
+                    │   ├── Privacy.tsx
+                    │   └── Terms.tsx
+                    └── services/
+                        ├── ttsService.ts
+                        ├── yellModeStore.ts
+                        └── ai/
+                            ├── focusDetectionService.ts
+                            ├── screenshotService.ts
+                            └── workClassificationService.ts

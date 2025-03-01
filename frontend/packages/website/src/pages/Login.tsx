@@ -30,7 +30,7 @@ function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 py-6">
       <div className="w-full max-w-md">
         <Card className="w-full shadow-lg border-gray-200">
           <CardHeader className="space-y-1 text-center pb-0">

@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: justdothething-frontend
+    env: static
+    buildCommand: yarn build:website
+    staticPublishPath: ./frontend/packages/website/dist
+    envVars:
+      - key: VITE_NODE_ENV
+        value: production
+      - key: VITE_API_URL_PROD
+        fromService:
+          name: justdothething-backend
+          type: web
+          envVarKey: URL
+          
+  - type: web
+    name: justdothething-backend
+    env: node
+    buildCommand: yarn build:backend
+    startCommand: yarn start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGINS
+        value: https://justdothething-frontend.onrender.com,chrome-extension://*
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false

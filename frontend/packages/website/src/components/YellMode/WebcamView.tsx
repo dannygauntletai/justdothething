@@ -46,13 +46,13 @@ const WebcamView: React.FC<WebcamViewProps> = ({
               width={320}
               height={240}
               videoConstraints={videoConstraints}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover max-w-full"
               mirrored={true}
             />
             
-            <div className={`absolute bottom-0 left-0 right-0 px-3 py-1 ${isFocused ? 'bg-green-500/80' : 'bg-yellow-500/80'} text-white text-xs flex justify-between`}>
-              <span>{isFocused ? 'Focused' : 'Distracted'}</span>
-              <span>{gazeDirection} {!eyesOpen && '- Eyes Closed'}</span>
+            <div className={`absolute bottom-0 left-0 right-0 px-2 sm:px-3 py-1 ${isFocused ? 'bg-green-500/80' : 'bg-yellow-500/80'} text-white text-xs flex flex-wrap sm:flex-nowrap justify-between`}>
+              <span className="mr-1">{isFocused ? 'Focused' : 'Distracted'}</span>
+              <span className="text-xs truncate">{gazeDirection} {!eyesOpen && '- Eyes Closed'}</span>
             </div>
           </div>
           
