@@ -8,6 +8,15 @@ import YellModeControls from './YellModeControls';
 import WebcamView from './WebcamView';
 import ScreenView from './ScreenView';
 import YellSettingsCard from './YellSettingsCard';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from '../ui/card';
+import { Button } from '../ui/button';
 
 /**
  * YellMode component for managing productivity monitoring and feedback
@@ -353,68 +362,73 @@ const YellMode: React.FC = () => {
     setIsActive(prevActive => !prevActive);
   };
   
-  // Show loading state during initialization
-  if (isInitializing) {
-    return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Yell Mode</h2>
-        <div className="flex flex-col items-center justify-center p-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-600">Initializing AI models...</p>
-          <p className="text-gray-500 text-sm mt-2">This may take a moment on first load</p>
-          {error && <p className="text-red-500 mt-4">{error}</p>}
-        </div>
-      </div>
-    );
-  }
-  
+  // Render YellMode card in dashboard style
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <YellModeControls 
-        isActive={isActive} 
-        onToggle={handleToggleYellMode} 
-        error={error}
-        isInitialized={isInitialized}
-      />
-      
-      {isActive && (
-        <div className="mt-6">
-          <div className="mb-4 text-sm text-gray-500">
-            <div className="flex items-center mb-1">
-              <div className={`w-3 h-3 rounded-full mr-2 ${isScreenCaptureActive ? 'bg-green-500' : 'bg-red-500'}`}></div>
-              <span>Screen Capture: {isScreenCaptureActive ? 'Active' : 'Inactive'}</span>
-            </div>
-            <div className="flex items-center mb-1">
-              <div className={`w-3 h-3 rounded-full mr-2 ${isWebcamActive ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-              <span>Webcam: {isWebcamActive ? 'Active' : settings.useFaceDetection ? 'Permission Denied' : 'Disabled'}</span>
-            </div>
-            {lastCheckTime && (
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full mr-2 bg-blue-500"></div>
-                <span>Last Check: {lastCheckTime.toLocaleTimeString()}</span>
-              </div>
-            )}
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ScreenView 
-              screenshot={screenshot} 
-              isWork={productivityState.isWork}
-              confidence={productivityState.contentConfidence}
-              detectedItems={productivityState.isWork ? 
-                productivityState.detectedWorkItems : 
-                productivityState.detectedNonWorkItems}
-            />
-            
-            {settings.useFaceDetection && (
-              <WebcamView onWebcamRef={handleWebcamRef} isFocused={productivityState.isFocused} />
-            )}
-            
-            <YellSettingsCard />
-          </div>
+    <Card className="flex flex-col items-center">
+      <CardHeader className="text-center">
+        <div className="w-24 h-24 rounded-full bg-red-100 flex items-center justify-center mb-4 mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
         </div>
-      )}
-    </div>
+        <CardTitle>AI-driven focus enforcement</CardTitle>
+        <CardDescription>
+          Automatically monitor productivity and stay on track
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent className="w-full">
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+
+        {isInitializing && (
+          <div className="flex justify-center items-center py-4">
+            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
+            <span className="ml-2 text-sm text-gray-500">Initializing AI models...</span>
+          </div>
+        )}
+
+        {isActive && (
+          <div className="space-y-4">
+            {isScreenCaptureActive && screenshot && (
+              <ScreenView screenshot={screenshot} />
+            )}
+            
+            {isWebcamActive && (
+              <WebcamView 
+                onWebcamRef={handleWebcamRef} 
+                isFocused={productivityState.isFocused}
+                gazeDirection={productivityState.gazeDirection}
+                eyesOpen={productivityState.eyesOpen}
+              />
+            )}
+            
+            <YellModeControls 
+              isActive={isActive} 
+              isInitialized={isInitialized}
+              onToggle={handleToggleYellMode} 
+              lastCheckTime={lastCheckTime}
+              productivityState={productivityState}
+            />
+          </div>
+        )}
+      </CardContent>
+
+      <CardFooter className="w-full">
+        <Button 
+          onClick={handleToggleYellMode}
+          disabled={isInitializing || (!isInitialized && !isActive)}
+          variant="dark"
+          className="w-full"
+        >
+          {isActive ? 'Stop Yell Mode' : 'Activate Yell Mode'}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
