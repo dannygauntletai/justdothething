@@ -1,6 +1,6 @@
 {
   "framework": "vite",
-  "buildCommand": "yarn vercel-build",
+  "buildCommand": "cd frontend/packages/website && yarn build",
   "outputDirectory": "frontend/packages/website/dist",
   "installCommand": "yarn install",
   "rewrites": [
