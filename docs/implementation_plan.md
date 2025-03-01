@@ -50,7 +50,7 @@ Yell Mode (Local TensorFlow.js)
 39. Install TensorFlow.js in frontend/packages/website/.
 40. Create a services/ directory in frontend/packages/website/src/.
 41. Create screenshotService.js in services/ to handle screenshot capture logic.
-42. Create imageClassificationService.js in services/ai/ to classify screenshots using TensorFlow.js locally.
+42. Create workClassificationService.ts in services/ai/ to classify screenshots using TensorFlow.js locally.
 43. Install html2canvas in frontend/packages/website/ for screenshot capture.
 44. Implement screenshot capture and classification logic in the website frontend.
 45. Use browser-based text-to-speech (e.g., Web Speech API) for yell generation.
@@ -60,7 +60,7 @@ Yell Mode (Local TensorFlow.js)
 Testing the MVP
 48. Install Jest in frontend/packages/website/ for unit testing.
 49. Create a __tests__/ directory in frontend/packages/website/src/services/.
-50. Write a unit test for imageClassificationService.js.
+50. Write a unit test for workClassificationService.ts.
 51. Run Jest tests in frontend/packages/website/.
 52. Test the website by simulating screenshot capture and classification.
 53. Verify the yell audio plays for non-work screenshots.

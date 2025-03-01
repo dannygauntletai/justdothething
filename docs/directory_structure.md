@@ -43,7 +43,7 @@ frontend/
 │   │   │   │   └── ...           # Other pages
 │   │   │   ├── services/
 │   │   │   │   ├── ai/           # Local AI processing with TensorFlow.js
-│   │   │   │   │   ├── imageClassificationService.js  # Screenshot classification
+│   │   │   │   │   ├── workClassificationService.ts  # Screenshot classification for work content
 │   │   │   │   │   ├── visionService.js               # Vision-related AI tasks
 │   │   │   │   │   ├── nlpService.js                  # Local NLP processing
 │   │   │   │   │   ├── recommendationService.js       # Task/tool recommendations
