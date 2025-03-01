@@ -8,10 +8,7 @@ services:
       - key: VITE_NODE_ENV
         value: production
       - key: VITE_API_URL_PROD
-        fromService:
-          name: justdothething-backend
-          type: web
-          envVarKey: URL
+        value: https://justdothething.onrender.com/api
           
   - type: web
     name: justdothething-backend

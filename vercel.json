@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend/packages/website && yarn vercel-build",
-  "outputDirectory": "frontend/packages/website/dist",
+  "buildCommand": "yarn vercel-build",
+  "outputDirectory": "dist",
   "installCommand": "yarn install",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "env": {
     "VITE_NODE_ENV": "production",
-    "VITE_API_URL_PROD": "https://justdothething-backend.onrender.com/api"
+    "VITE_API_URL_PROD": "https://justdothething.onrender.com/api"
   }
 } 
