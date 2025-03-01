@@ -11,8 +11,14 @@ const frontendUrl = isProduction
   ? import.meta.env.VITE_FRONTEND_URL_PROD 
   : import.meta.env.VITE_FRONTEND_URL || 'http://localhost:5173';
 
-// Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Create Supabase client with proper redirect options
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
 
 // Auth helpers
 export const signInWithGoogle = async () => {
