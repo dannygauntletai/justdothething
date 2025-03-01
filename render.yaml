@@ -9,6 +9,8 @@ services:
         value: production
       - key: VITE_API_URL_PROD
         value: https://justdothething.onrender.com/api
+      - key: VITE_FRONTEND_URL_PROD
+        value: https://justdothething-website-s4fb.vercel.app
           
   - type: web
     name: justdothething-backend
@@ -22,8 +24,10 @@ services:
         value: production
       - key: PORT
         value: 10000
+      - key: FRONTEND_URL
+        value: https://justdothething-website-s4fb.vercel.app
       - key: CORS_ORIGINS
-        value: https://justdothething-frontend.onrender.com,chrome-extension://*
+        value: https://justdothething-website-s4fb.vercel.app,chrome-extension://*
       - key: DATABASE_URL
         sync: false
       - key: DIRECT_URL

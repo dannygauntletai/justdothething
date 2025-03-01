@@ -8,6 +8,7 @@
   ],
   "env": {
     "VITE_NODE_ENV": "production",
-    "VITE_API_URL_PROD": "https://justdothething.onrender.com/api"
+    "VITE_API_URL_PROD": "https://justdothething.onrender.com/api",
+    "VITE_FRONTEND_URL_PROD": "https://justdothething-website-s4fb.vercel.app"
   }
 } 
