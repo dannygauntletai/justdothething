@@ -27,7 +27,40 @@ const CONFIG = {
     FACE_SIZE: 0.15,
     GAZE_DIRECTION: 0.25,
     EYE_OPENNESS: 0.1
+  },
+  
+  // Multi-monitor configuration
+  MULTI_MONITOR: {
+    ENABLED: true,              // Enable multi-monitor awareness
+    VERTICAL_MONITOR: true,     // Set to true if second monitor is above the primary
+    UP_TOLERANCE: 0.25,         // Increased tolerance for looking up (was 0.35)
+    PERSISTENT_FOCUS_TIME: 3000 // Time in ms to maintain focus when looking at second monitor
+  },
+  
+  // Screen area gaze configuration
+  SCREEN_GAZE: {
+    // Widened thresholds for considering gaze as within main screen
+    HORIZONTAL_RANGE: {
+      MIN: 0.25,  // Expanded from 0.35 - less sensitive to looking left
+      MAX: 0.75   // Expanded from 0.65 - less sensitive to looking right
+    },
+    VERTICAL_RANGE: {
+      MIN: 0.2,   // Expanded from 0.35 - less sensitive to looking up
+      MAX: 0.75   // Expanded from 0.65 - less sensitive to looking down
+    },
+    // Gradual confidence decay parameters
+    CONFIDENCE_DECAY: {
+      HORIZONTAL: 0.7, // How quickly confidence drops when looking left/right
+      VERTICAL: 0.5    // How quickly confidence drops when looking up/down
+    }
   }
+};
+
+// Persistent state for multi-monitor tracking
+const MONITOR_STATE = {
+  lastLookUpTime: 0,
+  isLookingAtSecondMonitor: false,
+  persistentFocusUntil: 0
 };
 
 // Gaze direction enum
@@ -40,11 +73,26 @@ export enum GazeDirection {
   UNKNOWN = 'UNKNOWN'
 }
 
+// More granular screen area classification
+export enum ScreenArea {
+  CENTER = 'CENTER',
+  TOP_LEFT = 'TOP_LEFT',
+  TOP = 'TOP',
+  TOP_RIGHT = 'TOP_RIGHT',
+  RIGHT = 'RIGHT',
+  BOTTOM_RIGHT = 'BOTTOM_RIGHT',
+  BOTTOM = 'BOTTOM',
+  BOTTOM_LEFT = 'BOTTOM_LEFT',
+  LEFT = 'LEFT',
+  OFF_SCREEN = 'OFF_SCREEN'
+}
+
 export interface FocusResult {
   focused: boolean;
   confidence: number;
   faceDetected: boolean;
   gazeDirection?: GazeDirection;
+  screenArea?: ScreenArea;      // Added more granular screen position
   eyesOpen?: boolean;
   facePosition?: {
     x: number;
@@ -56,6 +104,7 @@ export interface FocusResult {
     x: number;
     y: number;
   };
+  isLookingAtSecondMonitor?: boolean; // Added to indicate if user is likely looking at second monitor
 }
 
 export interface FocusDetectionState {
@@ -159,7 +208,13 @@ export const focusDetectionService = {
     landmarks: faceLandmarksDetection.Keypoint[],
     imageWidth: number,
     imageHeight: number
-  ): GazeDirection => {
+  ): { 
+    direction: GazeDirection; 
+    screenArea: ScreenArea; 
+    horizontalRatio: number; 
+    verticalRatio: number; 
+    gazeConfidence: number; 
+  } => {
     try {
       // Get eye landmark indices
       // Left eye landmarks (from user's perspective)
@@ -218,21 +273,130 @@ export const focusDetectionService = {
       const horizRatio = (leftHorizRatio + rightHorizRatio) / 2;
       const vertRatio = (leftVertRatio + rightVertRatio) / 2;
       
-      // Determine gaze direction
-      if (horizRatio < 0.35) {
-        return GazeDirection.LEFT;
-      } else if (horizRatio > 0.65) {
-        return GazeDirection.RIGHT;
-      } else if (vertRatio < 0.35) {
-        return GazeDirection.UP;
-      } else if (vertRatio > 0.65) {
-        return GazeDirection.DOWN;
-      } else {
-        return GazeDirection.STRAIGHT;
+      // Calculate and log more detailed information about eye position
+      const detailedEyeInfo = {
+        leftEye: { 
+          horizontalRatio: leftHorizRatio.toFixed(2), 
+          verticalRatio: leftVertRatio.toFixed(2) 
+        },
+        rightEye: { 
+          horizontalRatio: rightHorizRatio.toFixed(2), 
+          verticalRatio: rightVertRatio.toFixed(2) 
+        },
+        average: { 
+          horizontalRatio: horizRatio.toFixed(2), 
+          verticalRatio: vertRatio.toFixed(2) 
+        }
+      };
+      
+      // Log detailed information about eye position occasionally
+      if (Math.random() < 0.05) { // Log only 5% of the time to reduce console spam
+        console.log('Detailed eye position:', detailedEyeInfo);
       }
+      
+      // Determine gaze direction with modified UP threshold for multi-monitor setups
+      const upThreshold = CONFIG.MULTI_MONITOR.ENABLED && CONFIG.MULTI_MONITOR.VERTICAL_MONITOR 
+        ? CONFIG.MULTI_MONITOR.UP_TOLERANCE  // Use higher tolerance (0.25 instead of 0.35)
+        : CONFIG.SCREEN_GAZE.VERTICAL_RANGE.MIN;  // Use the screen gaze vertical range
+      
+      // Determine basic gaze direction
+      let direction: GazeDirection;
+      if (horizRatio < CONFIG.SCREEN_GAZE.HORIZONTAL_RANGE.MIN) {
+        direction = GazeDirection.LEFT;
+      } else if (horizRatio > CONFIG.SCREEN_GAZE.HORIZONTAL_RANGE.MAX) {
+        direction = GazeDirection.RIGHT;
+      } else if (vertRatio < upThreshold) {
+        // If looking up, track this for multi-monitor awareness
+        if (CONFIG.MULTI_MONITOR.ENABLED && CONFIG.MULTI_MONITOR.VERTICAL_MONITOR) {
+          MONITOR_STATE.lastLookUpTime = Date.now();
+          MONITOR_STATE.isLookingAtSecondMonitor = true;
+          
+          // Set persistent focus time
+          MONITOR_STATE.persistentFocusUntil = Date.now() + CONFIG.MULTI_MONITOR.PERSISTENT_FOCUS_TIME;
+        }
+        direction = GazeDirection.UP;
+      } else if (vertRatio > CONFIG.SCREEN_GAZE.VERTICAL_RANGE.MAX) {
+        direction = GazeDirection.DOWN;
+      } else {
+        direction = GazeDirection.STRAIGHT;
+      }
+      
+      // Determine more granular screen area
+      let screenArea: ScreenArea;
+      
+      // Check if gaze is within main screen bounds
+      const withinHorizontalBounds = 
+        horizRatio >= CONFIG.SCREEN_GAZE.HORIZONTAL_RANGE.MIN && 
+        horizRatio <= CONFIG.SCREEN_GAZE.HORIZONTAL_RANGE.MAX;
+        
+      const withinVerticalBounds = 
+        vertRatio >= CONFIG.SCREEN_GAZE.VERTICAL_RANGE.MIN && 
+        vertRatio <= CONFIG.SCREEN_GAZE.VERTICAL_RANGE.MAX;
+      
+      if (!withinHorizontalBounds || !withinVerticalBounds) {
+        screenArea = ScreenArea.OFF_SCREEN;
+      } else if (horizRatio < 0.4 && vertRatio < 0.4) {
+        screenArea = ScreenArea.TOP_LEFT;
+      } else if (horizRatio >= 0.4 && horizRatio <= 0.6 && vertRatio < 0.4) {
+        screenArea = ScreenArea.TOP;
+      } else if (horizRatio > 0.6 && vertRatio < 0.4) {
+        screenArea = ScreenArea.TOP_RIGHT;
+      } else if (horizRatio > 0.6 && vertRatio >= 0.4 && vertRatio <= 0.6) {
+        screenArea = ScreenArea.RIGHT;
+      } else if (horizRatio > 0.6 && vertRatio > 0.6) {
+        screenArea = ScreenArea.BOTTOM_RIGHT;
+      } else if (horizRatio >= 0.4 && horizRatio <= 0.6 && vertRatio > 0.6) {
+        screenArea = ScreenArea.BOTTOM;
+      } else if (horizRatio < 0.4 && vertRatio > 0.6) {
+        screenArea = ScreenArea.BOTTOM_LEFT;
+      } else if (horizRatio < 0.4 && vertRatio >= 0.4 && vertRatio <= 0.6) {
+        screenArea = ScreenArea.LEFT;
+      } else {
+        screenArea = ScreenArea.CENTER;
+      }
+      
+      // Calculate a continuous gaze confidence score based on distance from center
+      // This provides a smoother transition from focused to unfocused
+      
+      // Calculate distance from ideal center position (0.5, 0.5)
+      const horizontalDistanceFromCenter = Math.abs(horizRatio - 0.5);
+      const verticalDistanceFromCenter = Math.abs(vertRatio - 0.5);
+      
+      // Calculate confidence decay based on distance (1.0 at center, decaying outward)
+      const horizontalConfidence = Math.max(0, 1 - (horizontalDistanceFromCenter * 2 * CONFIG.SCREEN_GAZE.CONFIDENCE_DECAY.HORIZONTAL));
+      const verticalConfidence = Math.max(0, 1 - (verticalDistanceFromCenter * 2 * CONFIG.SCREEN_GAZE.CONFIDENCE_DECAY.VERTICAL));
+      
+      // Combine for overall gaze confidence
+      let gazeConfidence = horizontalConfidence * verticalConfidence;
+      
+      // If looking at second monitor, boost confidence
+      if (CONFIG.MULTI_MONITOR.ENABLED && 
+          CONFIG.MULTI_MONITOR.VERTICAL_MONITOR && 
+          direction === GazeDirection.UP) {
+        gazeConfidence = 0.85; // High confidence for second monitor
+      }
+      
+      // Occasional logging of gaze calculations
+      if (Math.random() < 0.02) {
+        console.log(`Gaze confidence calculation: horizontal=${horizontalConfidence.toFixed(2)}, vertical=${verticalConfidence.toFixed(2)}, combined=${gazeConfidence.toFixed(2)}, area=${screenArea}`);
+      }
+      
+      return { 
+        direction, 
+        screenArea, 
+        horizontalRatio: horizRatio, 
+        verticalRatio: vertRatio, 
+        gazeConfidence 
+      };
     } catch (error) {
       console.error('Error determining gaze direction:', error);
-      return GazeDirection.UNKNOWN;
+      return { 
+        direction: GazeDirection.UNKNOWN, 
+        screenArea: ScreenArea.OFF_SCREEN, 
+        horizontalRatio: 0.5, 
+        verticalRatio: 0.5, 
+        gazeConfidence: 0.5 
+      };
     }
   },
 
@@ -287,6 +451,36 @@ export const focusDetectionService = {
       console.error('Error detecting eye openness:', error);
       return true; // Default to eyes open on error
     }
+  },
+
+  /**
+   * Check if the user is likely looking at a second monitor
+   * @param gazeDirection The current gaze direction
+   * @returns Boolean indicating if the user is likely looking at a second monitor
+   */
+  isLookingAtSecondMonitor: (gazeDirection: GazeDirection): boolean => {
+    // If multi-monitor mode is disabled, always return false
+    if (!CONFIG.MULTI_MONITOR.ENABLED) {
+      return false;
+    }
+    
+    const now = Date.now();
+    
+    // If we've recently determined the user is looking at a second monitor,
+    // extend that determination for a grace period to prevent flickering
+    if (now < MONITOR_STATE.persistentFocusUntil) {
+      return true;
+    }
+    
+    // Check if the user is looking up (for vertical monitor setup)
+    if (CONFIG.MULTI_MONITOR.VERTICAL_MONITOR && gazeDirection === GazeDirection.UP) {
+      return true;
+    }
+    
+    // Reset the second monitor state if no longer looking at it
+    MONITOR_STATE.isLookingAtSecondMonitor = false;
+    
+    return false;
   },
 
   /**
@@ -368,7 +562,9 @@ export const focusDetectionService = {
 
       // Now use face landmarks model for eye detection
       let gazeDirection = GazeDirection.UNKNOWN;
+      let screenArea = ScreenArea.OFF_SCREEN;
       let eyesOpen = true;
+      let gazeConfidence = 0.5; // Default middle value
       
       try {
         const landmarksModel = await focusDetectionService.getFaceLandmarksModel();
@@ -377,23 +573,30 @@ export const focusDetectionService = {
         if (faceLandmarks && faceLandmarks.length > 0) {
           const landmarks = faceLandmarks[0].keypoints;
           
-          // Determine gaze direction
-          gazeDirection = focusDetectionService.determineGazeDirection(landmarks, videoWidth, videoHeight);
+          // Use enhanced gaze direction detection
+          const gazeResults = focusDetectionService.determineGazeDirection(
+            landmarks, videoWidth, videoHeight
+          );
+          
+          gazeDirection = gazeResults.direction;
+          screenArea = gazeResults.screenArea;
+          gazeConfidence = gazeResults.gazeConfidence;
           
           // Detect if eyes are open
           eyesOpen = focusDetectionService.detectEyeOpenness(landmarks);
           
-          console.log(`Eye detection: gaze=${gazeDirection}, eyesOpen=${eyesOpen}`);
+          console.log(`Eye detection: gaze=${gazeDirection}, area=${screenArea}, confidence=${gazeConfidence.toFixed(2)}, eyesOpen=${eyesOpen}`);
         }
       } catch (error) {
         console.error('Error during face landmarks detection:', error);
         // Use default values on error
         gazeDirection = GazeDirection.STRAIGHT;
+        screenArea = ScreenArea.CENTER;
         eyesOpen = true;
       }
       
-      // Calculate gaze confidence (1 if looking straight, 0 if looking away)
-      const gazeConfidence = gazeDirection === GazeDirection.STRAIGHT ? 1 : 0;
+      // Check if looking at second monitor
+      const isLookingAtSecondMonitor = focusDetectionService.isLookingAtSecondMonitor(gazeDirection);
       
       // Calculate focus confidence based on combined signals
       let focusConfidence = 
@@ -403,6 +606,19 @@ export const focusDetectionService = {
         gazeConfidence * CONFIG.WEIGHTS.GAZE_DIRECTION +
         (eyesOpen ? 1 : 0) * CONFIG.WEIGHTS.EYE_OPENNESS;
       
+      // Boost focus score if user is looking at a second monitor
+      if (isLookingAtSecondMonitor) {
+        // Apply a small boost to ensure focus is maintained while looking at second monitor
+        focusConfidence = Math.min(focusConfidence * 1.15, 1.0);
+      }
+      
+      // If eyes are within the main screen bounds, apply a minimum confidence floor
+      // This ensures we don't consider users unfocused when they're just looking at different
+      // parts of the same screen
+      if (screenArea !== ScreenArea.OFF_SCREEN && eyesOpen) {
+        focusConfidence = Math.max(focusConfidence, 0.75);
+      }
+      
       // Determine if user is focused based on confidence threshold
       const isFocused = focusConfidence > CONFIG.FOCUS_CONFIDENCE_THRESHOLD;
       
@@ -411,9 +627,11 @@ export const focusDetectionService = {
         confidence: focusConfidence,
         faceDetected: true,
         gazeDirection,
+        screenArea,
         eyesOpen,
         facePosition: faceBox,
-        center: faceCenter
+        center: faceCenter,
+        isLookingAtSecondMonitor
       };
     } catch (error) {
       console.error('Error during focus detection:', error);

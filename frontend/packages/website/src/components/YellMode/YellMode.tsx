@@ -275,11 +275,17 @@ const YellMode: React.FC = () => {
         focusConfidence = 1;
       }
       
-      // Update productivity state
+      // Update productivity state (both content classification and focus detection)
       updateProductivityState({
         isWork,
         isFocused,
-        lastCheckTime: new Date()
+        gazeDirection,
+        contentConfidence: confidence,
+        focusConfidence,
+        eyesOpen,
+        lastCheckedAt: new Date(),
+        detectedWorkItems,
+        detectedNonWorkItems
       });
       
       // Combine both signals to determine if we should yell
@@ -391,7 +397,14 @@ const YellMode: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ScreenView screenshot={screenshot} isWork={productivityState.isWork} />
+            <ScreenView 
+              screenshot={screenshot} 
+              isWork={productivityState.isWork}
+              confidence={productivityState.contentConfidence}
+              detectedItems={productivityState.isWork ? 
+                productivityState.detectedWorkItems : 
+                productivityState.detectedNonWorkItems}
+            />
             
             {settings.useFaceDetection && (
               <WebcamView onWebcamRef={handleWebcamRef} isFocused={productivityState.isFocused} />

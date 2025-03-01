@@ -29,6 +29,27 @@ export interface ProductivityState {
   
   // The last time a yell was played
   lastYellTime: Date | null;
+  
+  // The confidence level of the content classification
+  contentConfidence?: number;
+  
+  // The confidence level of the focus detection
+  focusConfidence?: number;
+  
+  // Gaze direction detected by eye tracking
+  gazeDirection?: string;
+  
+  // Whether the user's eyes are open
+  eyesOpen?: boolean;
+  
+  // Alias for lastCheckTime for compatibility with updates
+  lastCheckedAt?: Date | null;
+  
+  // Items detected in the screenshot that indicate work content
+  detectedWorkItems?: string[];
+  
+  // Items detected in the screenshot that indicate non-work content
+  detectedNonWorkItems?: string[];
 }
 
 // Interface for permission states
@@ -81,6 +102,11 @@ const DEFAULT_PRODUCTIVITY_STATE: ProductivityState = {
   isFocused: true, // Assume focused by default
   lastCheckTime: null,
   lastYellTime: null,
+  contentConfidence: 1,
+  focusConfidence: 1,
+  eyesOpen: true,
+  detectedWorkItems: [],
+  detectedNonWorkItems: []
 };
 
 // Default permission states
