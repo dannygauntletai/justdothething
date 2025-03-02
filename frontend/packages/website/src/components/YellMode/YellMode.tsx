@@ -18,6 +18,19 @@ import {
 } from '../ui/card';
 import { Button } from '../ui/button';
 
+// Define a fallback for GazeDirection if it's not properly imported
+const GazeDirectionFallback = {
+  UNKNOWN: 'unknown',
+  CENTER: 'center',
+  LEFT: 'left',
+  RIGHT: 'right',
+  UP: 'up',
+  DOWN: 'down'
+};
+
+// Use the imported GazeDirection or fallback to our defined version
+const GazeDirectionValues = typeof GazeDirection === 'object' ? GazeDirection : GazeDirectionFallback;
+
 /**
  * YellMode component for managing productivity monitoring and feedback
  */
@@ -27,6 +40,7 @@ const YellMode: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPageVisible, setIsPageVisible] = useState(true);
   
   // State for screen and webcam capture
   const [screenshot, setScreenshot] = useState<string | null>(null);
@@ -50,6 +64,80 @@ const YellMode: React.FC = () => {
   
   // Calculate the check interval in milliseconds
   const checkIntervalMs = parseInt(settings.checkInterval) * 1000;
+
+  /**
+   * Handle page visibility changes
+   */
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      const visible = !document.hidden;
+      setIsPageVisible(visible);
+      
+      console.log(`YellMode detected visibility change: ${visible ? 'visible' : 'hidden'}`);
+      
+      if (!visible && isActive) {
+        // When page becomes hidden while Yell Mode is active
+        console.log('Page hidden - continuing to monitor in background');
+        
+        // Instead of stopping, try to continue in background
+        // We'll still reset speech to prevent errors, but won't stop the monitoring
+        ttsService.resetSpeech();
+        
+        // Signal to the system we want to continue processing
+        if ('wakeLock' in navigator) {
+          try {
+            // @ts-ignore - TypeScript may not recognize the experimental Wake Lock API
+            navigator.wakeLock.request('screen')
+              .then((wakeLock: any) => {
+                console.log('Wake Lock obtained - may help with background processing');
+                // Release after a timeout to be good citizens
+                setTimeout(() => {
+                  wakeLock.release();
+                  console.log('Wake Lock released');
+                }, 30000); // 30 seconds
+              })
+              .catch((err: any) => console.warn('Wake Lock request failed:', err));
+          } catch (err) {
+            console.warn('Wake Lock API error:', err);
+          }
+        }
+      } else if (visible && isActive) {
+        // When page becomes visible again
+        console.log('Page visible again - continuing normal operation');
+        
+        // Reset speech engine to clear any errors
+        ttsService.resetSpeech();
+        
+        // Run a check to get back in sync
+        if (isActive) {
+          setTimeout(() => checkProductivity(), 1000);
+        }
+      }
+    };
+    
+    // Add visibility change listener
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Request persistence permission when the component mounts
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions.query({ name: 'persistent-storage' as any })
+        .then(result => {
+          if (result.state === 'granted') {
+            console.log('Persistent storage permission granted');
+          } else {
+            console.log('Persistent storage permission status:', result.state);
+          }
+        })
+        .catch(err => console.warn('Permission query error:', err));
+    }
+    
+    // Clean up on unmount
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      // Make sure speech is fully reset on unmount
+      ttsService.resetSpeech();
+    };
+  }, [isActive]);
   
   /**
    * Initialize AI models when component mounts
@@ -84,6 +172,11 @@ const YellMode: React.FC = () => {
     };
     
     initializeAI();
+    
+    // Cleanup on unmount
+    return () => {
+      ttsService.resetSpeech();
+    };
   }, []);
   
   /**
@@ -143,14 +236,23 @@ const YellMode: React.FC = () => {
             window.clearInterval(checkIntervalRef.current);
           }
           
-          // Start the productivity check interval
-          console.log(`Starting productivity checks every ${checkIntervalMs}ms`);
+          // Start the productivity check interval that continues in background
+          console.log(`Starting productivity checks every ${checkIntervalMs}ms, including in background`);
           checkIntervalRef.current = window.setInterval(() => {
-            checkProductivity();
+            // Run even in background, but log different message
+            if (document.visibilityState === 'visible') {
+              console.log('Running foreground productivity check');
+              checkProductivity();
+            } else {
+              console.log('Running background productivity check');
+              checkProductivity(true); // Pass flag indicating running in background
+            }
           }, checkIntervalMs);
           
           // Initial check
-          checkProductivity();
+          if (document.visibilityState === 'visible') {
+            checkProductivity();
+          }
           
         } catch (err) {
           console.error('Error setting up Yell Mode:', err);
@@ -172,7 +274,7 @@ const YellMode: React.FC = () => {
         setScreenCaptureActive(false);
         
         // Stop any active speech
-        ttsService.stopSpeech();
+        ttsService.resetSpeech();
         
         // Reset state
         setScreenshot(null);
@@ -188,28 +290,39 @@ const YellMode: React.FC = () => {
         window.clearInterval(checkIntervalRef.current);
         checkIntervalRef.current = null;
       }
+      // Always use resetSpeech for cleanup
+      ttsService.resetSpeech();
     };
-  }, [isActive, settings.useFaceDetection, isInitialized]);
+  }, [isActive, settings.useFaceDetection, isInitialized, checkIntervalMs]);
   
   /**
    * Function to check productivity by capturing and analyzing screen content
    * and user focus via webcam if enabled
+   * @param isBackgroundCheck Whether this check is running while tab is in background
    */
-  const checkProductivity = async () => {
+  const checkProductivity = async (isBackgroundCheck = false) => {
     if (!isActive || !isInitialized) return;
     
-    console.log('Running productivity check...');
+    // Log different message but continue processing in background
+    if (document.hidden && !isBackgroundCheck) {
+      console.log('Page not visible, but continuing with background check');
+    }
+    
+    console.log(`Running productivity check (background: ${isBackgroundCheck})`);
     setLastCheckTime(new Date());
     
     try {
       // Capture screenshot
       const screenshotDataUrl = await screenshotService.captureScreenshot();
       if (!screenshotDataUrl) {
-        console.warn('Failed to capture screenshot');
+        console.warn('Failed to capture screenshot - may be due to background state');
         return;
       }
       
-      setScreenshot(screenshotDataUrl);
+      // Only update UI if in foreground to avoid unnecessary renders
+      if (!isBackgroundCheck) {
+        setScreenshot(screenshotDataUrl);
+      }
       
       // Analyze screenshot
       console.log('Classifying screenshot...');
@@ -231,7 +344,7 @@ const YellMode: React.FC = () => {
       // Analyze user focus if webcam is active
       let isFocused = true; // Default to true if webcam not used
       let focusConfidence = 1;
-      let gazeDirection = GazeDirection.UNKNOWN;
+      let gazeDirection = GazeDirectionValues.UNKNOWN;
       let eyesOpen = true;
       
       // Check for focus detection if enabled
@@ -260,7 +373,7 @@ const YellMode: React.FC = () => {
             
             isFocused = focusResult.focused;
             focusConfidence = focusResult.confidence;
-            gazeDirection = focusResult.gazeDirection || GazeDirection.UNKNOWN;
+            gazeDirection = focusResult.gazeDirection || GazeDirectionValues.UNKNOWN;
             eyesOpen = focusResult.eyesOpen || true;
             
             console.log(`Focus detection: user is ${isFocused ? 'focused' : 'not focused'} (confidence: ${focusConfidence.toFixed(2)})`);
@@ -317,6 +430,8 @@ const YellMode: React.FC = () => {
         }
       });
       
+      // When determining if we should yell, consider background state
+      // but still attempt to yell even in background
       if (shouldYell) {
         // Check cooldown period
         const cooldownMs = parseInt(settings.yellCooldown) * 1000;
@@ -326,18 +441,23 @@ const YellMode: React.FC = () => {
           : cooldownMs + 1; // Ensure first check can trigger a yell
         
         if (timeSinceLastYell > cooldownMs) {
-          console.log('Triggering yell...');
+          console.log(`Triggering yell (background: ${isBackgroundCheck})`);
           
           // Generate message based on status
           const message = ttsService.getYellMessage(isWork, isFocused, gazeDirection);
           
-          // Play the message with selected yell style
-          ttsService.playYell(message, settings.yellStyle);
-          
-          // Update last yell time
-          updateProductivityState({
-            lastYellTime: new Date()
-          });
+          try {
+            // Play the message with selected yell style
+            ttsService.playYell(message, settings.yellStyle);
+            
+            // Update last yell time
+            updateProductivityState({
+              lastYellTime: new Date()
+            });
+          } catch (error) {
+            console.error('Error playing yell:', error);
+            // Don't update last yell time if there was an error
+          }
         } else {
           console.log(`In cooldown period, ${Math.ceil((cooldownMs - timeSinceLastYell) / 1000)}s remaining`);
         }
@@ -401,9 +521,9 @@ const YellMode: React.FC = () => {
             {isWebcamActive && (
               <WebcamView 
                 onWebcamRef={handleWebcamRef} 
-                isFocused={productivityState.isFocused}
-                gazeDirection={productivityState.gazeDirection}
-                eyesOpen={productivityState.eyesOpen}
+                isFocused={productivityState.isFocused || false}
+                gazeDirection={productivityState.gazeDirection || 'unknown'}
+                eyesOpen={productivityState.eyesOpen || true}
               />
             )}
             
@@ -412,7 +532,15 @@ const YellMode: React.FC = () => {
               isInitialized={isInitialized}
               onToggle={handleToggleYellMode} 
               lastCheckTime={lastCheckTime}
-              productivityState={productivityState}
+              productivityState={{
+                isWork: productivityState.isWork || false,
+                contentConfidence: productivityState.contentConfidence || 0,
+                isFocused: productivityState.isFocused || false,
+                detectedWorkItems: productivityState.detectedWorkItems || [],
+                detectedNonWorkItems: productivityState.detectedNonWorkItems || [],
+                gazeDirection: productivityState.gazeDirection || 'unknown',
+                eyesOpen: productivityState.eyesOpen || true
+              }}
             />
           </div>
         )}
