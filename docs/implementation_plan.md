@@ -20,112 +20,121 @@ Backend Setup
 15. Create a src/ directory in backend/.
 16. Create an app.js file in backend/src/ for the Express app.
 17. Install dotenv for environment variable management.
-18. Create a .env file in backend/ with placeholders (e.g., SUPABASE_URL, OPENAI_API_KEY).
+18. Create a .env file in backend/ with placeholders (e.g., FIREBASE_CONFIG).
 19. Configure app.js to load environment variables using dotenv.
-20. Install the Supabase JavaScript client in backend/.
+20. Install the Firebase Admin SDK in backend/ for authentication and data storage.
 21. Create a config/ directory in backend/src/.
-22. Create supabase.js in config/ to initialize the Supabase client.
-23. Open the Supabase dashboard and locate your project's SUPABASE_URL and SUPABASE_KEY.
-24. Add SUPABASE_URL and SUPABASE_KEY to backend/.env.
-25. Test the Supabase connection by running a simple query from app.js.
+22. Create firebase.js in config/ to initialize the Firebase Admin SDK.
+23. Create a Firebase project, generate a service account key, and add the credentials to backend/.env.
+24. Test the Firebase connection by running simple queries from app.js.
 
-Database Configuration
-26. In Supabase, create a users table with columns: id (UUID), settings (JSON).
-27. Create a screenshots table with columns: id (Integer), user_id (UUID), timestamp (Datetime), hash (Varchar), classification (Varchar), confidence (Float).
-28. Enable Row-Level Security (RLS) for the users table.
-29. Enable RLS for the screenshots table.
-30. Create an RLS policy for users to allow authenticated users to access their own data.
-31. Create an RLS policy for screenshots to restrict access to the user's own screenshots.
-32. Test RLS by inserting a sample user and querying as an authenticated user.
+Firebase Configuration
+25. In the Firebase console, set up Firebase Authentication with desired providers.
+26. Create a Firestore database in the Firebase console.
+27. Define security rules for the Firestore database to ensure users can only access their own data.
+28. Create collections for:
+   - users (basic profile information)
+   - screenshots (metadata for Yell Mode)
+   - transcriptions (for Yap Mode)
+   - tasks (derived from transcriptions)
+   - summaries (generated from transcriptions on the backend)
+   - insights (for Flow Mode analytics)
+29. Set up Firebase Storage for any binary data (like audio recordings).
+30. Configure Firebase Functions for generating summaries and insights.
+31. Test Firebase security rules by attempting to access data with different authentication states.
 
-Authentication
-33. Create a middleware/ directory in backend/src/.
-34. Create authMiddleware.js in middleware/ to validate Supabase JWT tokens.
-35. Install jsonwebtoken in backend/ for token verification.
-36. Update authMiddleware.js to decode and verify tokens.
-37. Add a /api/auth/test endpoint in app.js to test authentication.
-38. Manually test the test endpoint with a valid Supabase JWT.
+Authentication Implementation
+32. Create a middleware/ directory in backend/src/.
+33. Create authMiddleware.js in middleware/ to validate Firebase JWT tokens.
+34. Update authMiddleware.js to extract user data from Firebase tokens.
+35. Create a userService.js in backend/src/services/ to manage user data in Firebase.
+36. Add a /api/auth/test endpoint in app.js to test the authentication.
+37. Test the authentication flow using Firebase Auth.
 
-Yell Mode (Local TensorFlow.js)
-39. Install TensorFlow.js in frontend/packages/website/.
-40. Create a services/ directory in frontend/packages/website/src/.
-41. Create screenshotService.js in services/ to handle screenshot capture logic.
-42. Create workClassificationService.ts in services/ai/ to classify screenshots using TensorFlow.js locally.
-43. Install html2canvas in frontend/packages/website/ for screenshot capture.
-44. Implement screenshot capture and classification logic in the website frontend.
-45. Use browser-based text-to-speech (e.g., Web Speech API) for yell generation.
-46. Create yellRoutes.js in backend/src/routes/ with a /trigger endpoint to save classification results.
-47. Mount yellRoutes.js in app.js under /api/yell.
+Yell Mode (Local TensorFlow.js with Firebase Storage)
+38. Install TensorFlow.js in frontend/packages/website/.
+39. Create a services/ directory in frontend/packages/website/src/.
+40. Create screenshotService.js in services/ to handle screenshot capture logic.
+41. Create workClassificationService.ts in services/ai/ to classify screenshots using TensorFlow.js locally.
+42. Install html2canvas in frontend/packages/website/ for screenshot capture.
+43. Implement screenshot capture and classification logic in the website frontend.
+44. Use browser-based text-to-speech (e.g., Web Speech API) for yell generation.
+45. Install Firebase client SDK in frontend/packages/website/.
+46. Create a firebaseClient.js in frontend/packages/website/src/services/ to handle Firebase interactions.
+47. Update Yell Mode to store metadata (not the actual screenshots) in Firebase.
+48. Create yellRoutes.js in backend/src/routes/ with a /trigger endpoint to save classification results to Firebase.
+49. Mount yellRoutes.js in app.js under /api/yell.
 
-Testing the MVP
-48. Install Jest in frontend/packages/website/ for unit testing.
-49. Create a __tests__/ directory in frontend/packages/website/src/services/.
-50. Write a unit test for workClassificationService.ts.
-51. Run Jest tests in frontend/packages/website/.
-52. Test the website by simulating screenshot capture and classification.
-53. Verify the yell audio plays for non-work screenshots.
+Yap Mode (Local Processing with Firebase Storage)
+50. Create speechRecognitionService.js in frontend/packages/website/src/services/ai/ for speech-to-text using Web Speech API.
+51. Create yapService.js in frontend/packages/website/src/services/ to handle Yap Mode functionality.
+52. Implement local processing for transcription analysis and task extraction.
+53. Implement Firebase Firestore integration in yapService.js to store transcriptions and tasks.
+54. Create a summaryService.js in backend/src/services/ to generate summaries from transcriptions.
+55. Create yapRoutes.js in backend/src/routes/ with endpoints to generate summaries.
+56. Mount yapRoutes.js in app.js under /api/yap.
+57. Test the Yap Mode flow from speech input to task extraction, transcription storage, and summary generation.
 
-Yap Mode (Local Processing)
-54. Create sttService.js in frontend/packages/website/src/services/ for speech-to-text using Web Speech API.
-55. Create nlpService.js in frontend/packages/website/src/services/ai/ for local NLP processing with TensorFlow.js.
-56. Integrate speech recognition and task extraction in the website frontend.
-57. Create yapRoutes.js in backend/src/routes/ with a /transcribe endpoint to save tasks.
-58. Mount yapRoutes.js in app.js under /api/yap.
-59. Test speech-to-text and task extraction manually in the website.
+Flow Mode (Local Analysis with Firebase Storage)
+58. Create flowService.js in frontend/packages/website/src/services/ for Flow Mode data collection.
+59. Implement local data processing with TensorFlow.js for preliminary insights.
+60. Configure Firebase Firestore to store processed activity data and insights.
+61. Create insightRoutes.js in backend/src/routes/ with endpoints to fetch insights.
+62. Mount insightRoutes.js in app.js under /api/flow.
+63. Implement dashboard visualization of insights from Firebase data.
 
 Website Development
-60. Navigate to frontend/packages/website/.
-61. Initialize a Node.js project in the website directory.
-62. Install Vite, React, and Vite's React plugin in website/.
-63. Create a src/ directory in website/.
-64. Create main.js in src/ as the website's entry point.
-65. Create App.js in src/ with a basic dashboard layout.
-66. Create index.html in website/public/ with a root div.
-67. Install React Router in website/.
-68. Create a pages/ directory in website/src/.
-69. Create Dashboard.js in pages/ for the main view.
-70. Create Settings.js in pages/ for user settings.
-71. Configure routing in App.js with React Router.
-72. Build the website using Vite and test locally.
+64. Navigate to frontend/packages/website/.
+65. Initialize a Node.js project in the website directory.
+66. Install Vite, React, and Vite's React plugin in website/.
+67. Create a src/ directory in website/.
+68. Create main.js in src/ as the website's entry point.
+69. Create App.js in src/ with a basic dashboard layout.
+70. Create index.html in website/public/ with a root div.
+71. Install React Router in website/.
+72. Create a pages/ directory in website/src/.
+73. Create Dashboard.js in pages/ for the main view.
+74. Create Settings.js in pages/ for user settings.
+75. Configure routing in App.js with React Router.
+76. Build the website using Vite and test locally.
 
 Shared Components
-73. Navigate to frontend/packages/shared/.
-74. Initialize a Node.js project in the shared directory.
-75. Create a ui-components/ directory in shared/.
-76. Create TaskCard.js in ui-components/ for reusable task UI.
-77. Create ModeToggle.js in ui-components/ for mode controls.
-78. Link the shared package to website/ via Yarn Workspaces.
+77. Navigate to frontend/packages/shared/.
+78. Initialize a Node.js project in the shared directory.
+79. Install Firebase client SDK in shared/ for reusable Firebase access patterns.
+80. Create a ui-components/ directory in shared/.
+81. Create TaskCard.js in ui-components/ for reusable task UI.
+82. Create ModeToggle.js in ui-components/ for mode controls.
+83. Create a firebase/ directory in shared/utils/ for Firebase utility functions.
+84. Link the shared package to website/ via Yarn Workspaces.
 
 Performance and Security
-79. Implement caching for screenshot hashes in frontend/packages/website/src/services/screenshotService.js.
-80. Add input validation for user inputs in the frontend services.
-81. Ensure authMiddleware.js is used for all protected routes in the backend.
+85. Implement caching strategies for Firebase data in the frontend.
+86. Set up Firebase Firestore indexes for efficient queries.
+87. Configure Firebase Security Rules to enforce data access controls.
+88. Implement proper Firebase connection management in the frontend.
+89. Set up Firebase Analytics to monitor app usage and performance.
+90. Optimize local processing with Web Workers or other performance enhancements.
 
-Authentication Integration
-82. Create centralized API service for authenticated requests in frontend/packages/website/src/services/.
-83. Update AuthContext to handle both Supabase and backend authentication in website/.
-84. Implement database user synchronization in Dashboard.js.
-85. Add proper environment variable type definitions for Vite in website/vite.config.js.
-86. Update login flow to properly authenticate with backend in website/.
+Authentication Finalization
+91. Create a centralized auth service using Firebase Auth.
+92. Implement Firebase Auth components in the website.
+93. Set up Firebase security rules to validate Firebase user IDs.
+94. Test the complete authentication flow from login to data access.
 
 Testing and QA
-87. Install Cypress in frontend/packages/website/ for end-to-end testing.
-88. Configure Cypress with a base URL in cypress.config.js.
-89. Write an E2E test for Yell Mode in cypress/e2e/.
-90. Run Cypress tests and verify Yell Mode works.
-91. Install Artillery in backend/ for load testing.
-92. Create a load test script for /trigger in backend/.
-93. Run the load test and analyze results.
+95. Install Cypress in frontend/packages/website/ for end-to-end testing.
+96. Configure Cypress with Firebase test credentials.
+97. Write E2E tests for Yell Mode and Yap Mode with Firebase integration.
+98. Run Cypress tests and verify functionality.
+99. Set up Firebase Emulator Suite for local testing.
+100. Create test cases for Firebase security rules.
 
 Production Readiness
-94. Create a landing/ directory in the root for a landing page.
-95. Initialize a Vite project in landing/.
-96. Build a simple landing page in landing/.
-97. Deploy the landing page to Vercel.
-98. Install Stripe in backend/.
-99. Create subscriptionService.js in backend/src/services/ for payments.
-100. Create subscriptionRoutes.js with a /create endpoint.
-101. Mount subscriptionRoutes.js in app.js under /api/subscription.
-102. Update the users table in Supabase with a subscription_id column.
-103. Deploy the backend to a hosting provider (e.g., Render).
-104. Deploy the website to Vercel.
+101. Set up Firebase hosting for the website.
+102. Configure Firebase deployment workflows.
+103. Set up monitoring and logging with Firebase Performance Monitoring.
+104. Implement proper error handling for Firebase operations.
+105. Create a production-ready Firebase deployment plan.
+106. Deploy the backend to a hosting provider (e.g., Cloud Run or Cloud Functions).
+107. Deploy the website to Firebase Hosting.
